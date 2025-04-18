@@ -1,45 +1,55 @@
-#include <Windows.h>
-#include <KamataEngine.h>
 #include "GameScene.h"
+#include <KamataEngine.h>
+#include <Windows.h>
+
+using namespace KamataEngine;
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
-	
 
-	using namespace KamataEngine;
-
-	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
-
-	GameScene* gameScene = new GameScene();
-
-	gameScene->Initialize();
+	//エンジン初期化
 	KamataEngine::Initialize();
 
+	//インスタンスの生成
+	GameScene* gameScene = new GameScene();
+	
+	//インスタンスの初期化
+	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 
-	//メインループ
-	while (true) 
-	{
+	ImGuiManager* imguiManager = ImGuiManager::GetInstance();
 
-		
+	gameScene->Initialize();
 
-		//エンジンの更新
-		if (KamataEngine::Update()) 
-		{
+	// メインループ
+	while (true) {
+
+		// エンジンの更新
+		if (KamataEngine::Update()) {
 			break;
 		}
 
-		//ゲームシーンの更新
+		// ImGui受付開始
+		imguiManager->Begin();
+
+		// ゲームシーンの更新
 		gameScene->Update();
 
-		//描画更新
-		dxCommon->PreDraw();
-		dxCommon->PreDraw();
+		//ImGui受付終了
+		imguiManager->End();
+
+		// 描画更新
 		dxCommon->PreDraw();
 
-		//ゲームシーンの描画
+		// ゲームシーンの描画
 		gameScene->Draw();
 
-		//描画終了
+		////軸表示の描画
+		AxisIndicator::GetInstance()->Draw();
+
+		//ImGui描画
+		imguiManager->Draw();
+
+		// 描画終了
 		dxCommon->PostDraw();
 	}
 
