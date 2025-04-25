@@ -12,6 +12,8 @@ void GameScene::Initialize()
 
 	model_ = Model::Create();
 
+	blockModel_ = Model::Create();
+
 	//debugCamera_ = new DebugCamera(1280, 720);
 
 	//自キャラの生成
@@ -23,6 +25,26 @@ void GameScene::Initialize()
 	worldTransform_.Initialize();
 
 	camera_.Initialize();
+
+	//要素数
+	const uint32_t kNumBlockHorizontal = 20;
+
+	//ブロック1個分の横幅
+	const float kBlockWidth = 2.0f;
+
+	//要素数を変更する
+	worldTransformBlocks_.resize(kNumBlockHorizontal);
+
+	//キューブの生成
+	for (uint32_t i = 0; i < kNumBlockHorizontal; ++i) {
+		worldTransformBlocks_[i] = new WorldTransform();
+
+		worldTransformBlocks_[i]->Initialize();
+
+		worldTransformBlocks_[i]->translation_.x = kBlockWidth * i;
+
+		worldTransformBlocks_[i]->translation_.y = 0.0f;
+	}
 }
 
 void GameScene::Update() 
@@ -32,6 +54,14 @@ void GameScene::Update()
 
 	//自キャラの更新
 	player_->UpDate();
+
+	for (WorldTransform* worldTransformBlock : worldTransformBlocks_) 
+	{
+		//アフィン変換行列の生成
+
+
+		worldTransformBlock->matWorld_=
+	}
 }
 
 void GameScene::Draw() 
@@ -45,8 +75,17 @@ void GameScene::Draw()
 
 GameScene::~GameScene() 
 { 
-	/*delete sprite_;
-	delete model_;
-	delete debugCamera_;*/
+	//delete sprite_;
+	//delete debugCamera_;
 	delete player_;
+
+	delete model_;
+
+	delete blockModel_;
+
+	for (WorldTransform* worldTransformBlock : worldTransformBlocks_) {
+		delete worldTransformBlock;
+	}
+
+	worldTransformBlocks_.clear();
 }

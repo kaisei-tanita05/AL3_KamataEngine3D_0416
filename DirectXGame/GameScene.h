@@ -1,6 +1,7 @@
 #pragma once
 #include "KamataEngine.h"
 #include "Player.h"
+#include <vector>
 
 using namespace KamataEngine;
 
@@ -24,16 +25,20 @@ private:
 	////テクスチャーハンドル
 	uint32_t textureHandle_ = 0;
 
-	KamataEngine::Sprite* sprite_ = nullptr;
+	Sprite* sprite_ = nullptr;
 
 	//////3Dモデル
-	KamataEngine::Model* model_ = nullptr;
+	Model* model_ = nullptr;
 
-	KamataEngine::WorldTransform worldTransform_;
+	//ブロックの3Dモデル
+	Model* blockModel_ = nullptr;
+
+	WorldTransform worldTransform_;
 	//
 	////カメラ
-	KamataEngine::Camera camera_;
+	Camera camera_;
 
+	std::vector<WorldTransform*> worldTransformBlocks_;
 
 	//KamataEngine::DebugCamera* debugCamera_ = nullptr;
 
