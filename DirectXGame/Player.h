@@ -1,5 +1,6 @@
 #pragma once
-#include <KamataEngine.h>
+#include "KamataEngine.h"
+
 
 class Player 
 {
@@ -8,7 +9,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(Model*model_,uint32_t textureHandle);
+	void Initialize(KamataEngine::Model*model_,uint32_t textureHandle,Camera*camera_);
 
 	/// <summary>
 	/// 更新
@@ -30,5 +31,5 @@ private:
 	//テクスチャハンドル
 	uint32_t textureHandle_ = 0u;
 
-	
+	Camera* camera_ = nullptr;
 };
