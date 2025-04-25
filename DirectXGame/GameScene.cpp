@@ -5,7 +5,7 @@ using namespace KamataEngine;
 void GameScene::Initialize() 
 {
 	//ここにインゲームの初期化処理を書く
-	//textureHandle_ = TextureManager::Load("mario.png");
+	textureHandle_ = TextureManager::Load("mario.png");
 
 	////スプライトインスタンスの生成
 	//sprite_ = Sprite::Create(textureHandle_, {100, 50});
@@ -18,7 +18,7 @@ void GameScene::Initialize()
 	player_ = new Player();
 
 	//自キャラの初期化
-	player_->Initialize(model_,textureHandle_);
+	player_->Initialize(model_,textureHandle_,&camera_);
 
 	worldTransform_.Initialize();
 
@@ -36,21 +36,11 @@ void GameScene::Update()
 
 void GameScene::Draw() 
 {
-	//スプライト描画前処理
-	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
-
-	Sprite::PreDraw(dxCommon->GetCommandList());
-
-	Model::PreDraw(dxCommon->GetCommandList());
 
 	//ここに3Dモデルインスタンスの描画
 	//model_->Draw(worldTransform_,camera_,textureHandle_);
 
-	Model::PostDraw();
-
-	Model::PreDraw(dxCommon->GetCommandList());
 	player_->Draw();
-	Model::PostDraw();
 }
 
 GameScene::~GameScene() 

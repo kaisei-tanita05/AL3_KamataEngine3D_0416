@@ -9,7 +9,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(KamataEngine::Model*model_,uint32_t textureHandle,Camera*camera_);
+	void Initialize(KamataEngine::Model*model_,uint32_t textureHandle,KamataEngine::Camera*camera_);
 
 	/// <summary>
 	/// 更新
@@ -31,5 +31,5 @@ private:
 	//テクスチャハンドル
 	uint32_t textureHandle_ = 0u;
 
-	Camera* camera_ = nullptr;
+	KamataEngine::Camera* camera_ = nullptr;
 };
