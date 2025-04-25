@@ -2,6 +2,8 @@
 #include "KamataEngine.h"
 #include "Player.h"
 
+using namespace KamataEngine;
+
 //ゲームシーン
 class GameScene 
 {
