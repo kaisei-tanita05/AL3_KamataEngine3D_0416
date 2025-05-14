@@ -1,5 +1,7 @@
 #pragma once
 #include "KamataEngine.h"
+#include "Math.h"
+#include "Skydome.h"
 
 
 class Player 
@@ -23,13 +25,17 @@ public:
 
 private:
 	//ワールド変換データ
-	KamataEngine::WorldTransform worldTransform_;
+	WorldTransform worldTransform_;
 
 	//モデル
-	KamataEngine::Model* model_ = nullptr;
+	Model* model_ = nullptr;
 
 	//テクスチャハンドル
 	uint32_t textureHandle_ = 0u;
 
-	KamataEngine::Camera* camera_ = nullptr;
+	Camera* camera_ = nullptr;
+
+	Math* math_ = nullptr;
+
+	std::vector<std::vector<WorldTransform*>> worldTransformBlocks_;
 };

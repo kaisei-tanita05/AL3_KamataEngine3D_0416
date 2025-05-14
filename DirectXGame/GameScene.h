@@ -3,6 +3,7 @@
 #include "Player.h"
 #include <vector>
 #include "Math.h"
+#include "Skydome.h"
 
 using namespace KamataEngine;
 
@@ -50,6 +51,10 @@ private:
 
 	//デバッグカメラ有効
 	bool isDebugCameraActive_ = false;
+
+	Skydome* skydome_ = nullptr;
+
+	Model*modelSkydome_ = nullptr;
 };
 
 
