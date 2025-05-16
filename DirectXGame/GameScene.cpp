@@ -4,7 +4,7 @@ using namespace KamataEngine;
 
 void GameScene::Initialize() {
 	// ここにインゲームの初期化処理を書く
-	textureHandle_ = TextureManager::Load("mario.png");
+	textureHandle_ = TextureManager::Load("Player/player.png");
 
 	////スプライトインスタンスの生成
 	// sprite_ = Sprite::Create(textureHandle_, {100, 50});
