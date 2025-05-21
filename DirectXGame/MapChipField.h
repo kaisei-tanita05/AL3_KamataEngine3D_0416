@@ -1,7 +1,33 @@
 #pragma once
 #include "KamataEngine.h"
+#include "Math.h"
+
+enum class MapChipType {
+	kBlank, // 空白
+	kBlock, // ブロック
+};
+
+struct MapChipData {
+	std::vector<std::vector<MapChipType>> data;
+};
 
 class MapChipField {
+
+public:
+
+MapChipData mapChipData_;
+
+void ResetMapChipDate();
+
+void LoadMapChipCsv(const std::string& filePath);
+
+MapChipType GetMapChipTypeByIndex(uint32_t xIndex, uint32_t yIndex);
+
+Vector3 GetMapChipPositionByIndex(uint32_t xIndex, uint32_t yIndex);
+
+int GetNumBlockVirtical() { return kNumBlockVirtical; }
+
+int GetNumBlockHorizontal() { return kNumBlockHorizontal; }
 
 private:
 	//1ブロックのサイズ
@@ -15,17 +41,3 @@ private:
 	static inline const uint32_t kNumBlockHorizontal = 100;
 };
 
-enum class MapChipType {
-	kBlank, // 空白
-	kBlock, // ブロック
-};
-
-struct MapChipDate {
-	std::vector<std::vector<MapChipType>> date;
-};
-
-MapChipDate mapChipDate_;
-
-void ResetMapChipDate();
-
-void Initialize()

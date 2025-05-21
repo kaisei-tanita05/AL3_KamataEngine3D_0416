@@ -1,8 +1,8 @@
 #pragma once
 #include "KamataEngine.h"
 #include "Math.h"
-#include "Skydome.h"
 
+using namespace KamataEngine;
 
 class Player 
 {
@@ -11,7 +11,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(KamataEngine::Model*model_,uint32_t textureHandle,KamataEngine::Camera*camera_);
+	void Initialize(Model*model_,Camera*camera_);
 
 	/// <summary>
 	/// 更新
@@ -31,11 +31,11 @@ private:
 	Model* model_ = nullptr;
 
 	//テクスチャハンドル
-	uint32_t textureHandle_ = 0u;
+	// uint32_t textureHandle_ = 0u;
 
 	Camera* camera_ = nullptr;
 
 	Math* math_ = nullptr;
 
-	std::vector<std::vector<WorldTransform*>> worldTransformBlocks_;
+	// std::vector<std::vector<WorldTransform*>> worldTransformBlocks_;
 };

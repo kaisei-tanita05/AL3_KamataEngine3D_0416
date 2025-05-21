@@ -4,6 +4,7 @@
 #include <vector>
 #include "Math.h"
 #include "Skydome.h"
+#include "MapChipField.h"
 
 using namespace KamataEngine;
 
@@ -22,6 +23,8 @@ public:
 	void Draw();
 
 	~GameScene();
+
+	void GenerateBlocks();
 
 private:
 	////テクスチャーハンドル
@@ -55,6 +58,12 @@ private:
 	Skydome* skydome_ = nullptr;
 
 	Model*modelSkydome_ = nullptr;
+
+	Model* modelPlayer_ = nullptr;
+
+	MapChipField* mapChipField_;
+
+
 };
 
 
