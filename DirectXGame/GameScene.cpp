@@ -18,10 +18,13 @@ void GameScene::Initialize() {
 	// 自キャラの生成
 	player_ = new Player();
 
+	//座標をマップチップ番号で指定
+	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(1, 18);
 
 	modelPlayer_ = Model::CreateFromOBJ("player", true);
+
 	// 自キャラの初期化
-	player_->Initialize(modelPlayer_, &camera_);
+	player_->Initialize(modelPlayer_, &camera_,playerPosition);
 
 	worldTransform_.Initialize();
 
@@ -42,8 +45,8 @@ void GameScene::Initialize() {
 	mapChipField_->LoadMapChipCsv("Resources/blocks.csv");
 
 	GenerateBlocks();
-}
 
+}
 
 void GameScene::GenerateBlocks() {
 	// 要素数

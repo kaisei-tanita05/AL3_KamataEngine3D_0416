@@ -1,8 +1,6 @@
 #pragma once
-#include "KamataEngine.h"
+#include <KamataEngine.h>
 #include "Player.h"
-#include <vector>
-#include "Math.h"
 #include "Skydome.h"
 #include "MapChipField.h"
 
@@ -39,7 +37,8 @@ private:
 	Model* blockModel_ = nullptr;
 
 	WorldTransform worldTransform_;
-	//
+	
+
 	////カメラ
 	Camera camera_;
 

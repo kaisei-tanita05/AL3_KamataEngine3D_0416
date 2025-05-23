@@ -1,5 +1,4 @@
 #pragma once
-#include "KamataEngine.h"
 #include "Math.h"
 
 enum class MapChipType {
@@ -36,8 +35,11 @@ private:
 	static inline const float kBlockHeight = 1.0f;
 
 	//ブロックの個数
+
+	//縦
 	static inline const uint32_t kNumBlockVirtical = 20;
 
+	//横
 	static inline const uint32_t kNumBlockHorizontal = 100;
 };
 
