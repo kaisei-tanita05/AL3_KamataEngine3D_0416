@@ -68,4 +68,7 @@ public:
 
 	//イージング
 	float EaseInOut(float start, float end, float t);
+
+
+
 };

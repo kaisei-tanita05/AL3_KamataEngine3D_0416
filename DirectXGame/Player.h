@@ -30,6 +30,10 @@ public:
 	/// </summary>
 	void Draw();
 
+	const WorldTransform& GetWorldTransform() const { return worldTransform_; }
+
+	const Vector3& GetVelocity() const { return velocity_; }
+
 private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;
@@ -79,7 +83,6 @@ private:
 
 	//最大落下速度(下方向)
 	static inline const float kLimitFallSpeed = 1.0f;
-
 
 
 };

@@ -46,6 +46,15 @@ void GameScene::Initialize() {
 
 	GenerateBlocks();
 
+	CController_ = new CameraController(); // 生成
+
+	CController_->Initialize(&camera_);    // 初期化
+
+	CController_->SetTarget(player_);      // 追従対象セット
+
+	CController_->Reset();                 // リセット
+
+
 }
 
 void GameScene::GenerateBlocks() {
