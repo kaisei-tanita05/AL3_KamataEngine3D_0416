@@ -386,3 +386,9 @@ Matrix4x4 Math::MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, co
 
 	return result;
 }
+
+float Math::EaseInOut(float start, float end, float t) {
+	// tは0.0～1.0の範囲
+	t = t * t * (3.0f - 2.0f * t); // スムーズステップ
+	return start + (end - start) * t;
+}
