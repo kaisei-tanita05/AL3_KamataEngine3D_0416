@@ -10,5 +10,5 @@ public:
 
 
 
-	Math math_;
+	//Math math_;
 };

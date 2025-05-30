@@ -46,20 +46,21 @@ private:
 
 	Camera* camera_ = nullptr;
 
-	Math* math_ = nullptr;
+	//Math* math_ = nullptr;
 
 	UpData* upData = nullptr;
 
 	Vector3 velocity_ = {};
 
-	static inline const float kAcceleration = 0.05f;
+
+	static inline const float kAcceleration = 0.2f;
 
 	LRDirection lrDirection_ = LRDirection::kRight;
 
 	static inline const float kAttenuation = 0.05f;
 
-	//最大落下速度(下方向)
-	static inline const float kLimitRunSpeed = 0.1f;
+	//速度制限
+	static inline const float kLimitRunSpeed = 0.2f;
 
 	//ジャンプ初速(上方向)
 	static inline const float kJumpAcceleration = 0.5f;
@@ -83,6 +84,5 @@ private:
 
 	//最大落下速度(下方向)
 	static inline const float kLimitFallSpeed = 1.0f;
-
 
 };

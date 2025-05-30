@@ -50,7 +50,7 @@ private:
 	// 自キャラ
 	Player* player_ = nullptr;
 
-	Math* math_ = nullptr;
+	//Math* math_ = nullptr;
 
 	//デバッグカメラ有効
 	bool isDebugCameraActive_ = false;

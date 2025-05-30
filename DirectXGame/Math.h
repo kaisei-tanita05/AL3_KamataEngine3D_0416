@@ -5,9 +5,9 @@
 
 using namespace KamataEngine;
 
-class Math 
-{
-public:
+//class Math 
+//{
+//public:
 
 	// 加算
 	Vector3 Add(const Vector3& v1, const Vector3& v2);
@@ -69,6 +69,24 @@ public:
 	//イージング
 	float EaseInOut(float start, float end, float t);
 
+	Vector3& operator+=(Vector3& lhv, const Vector3& rhv);
 
+	Vector3& operator-=(Vector3& lhv, const Vector3& rhv);
 
-};
+	Vector3& operator*=(Vector3& v, float s);
+
+	Vector3& operator/=(Vector3& v, float s);
+
+	Vector3 operator*(const Vector3& v1, const float f);
+
+	Matrix4x4& operator*=(Matrix4x4& lhm, const Matrix4x4& rhm);
+
+	Vector3 operator+(const Vector3& v1, const Vector3& v2);
+
+	Matrix4x4 operator*(const Matrix4x4& m1, const Matrix4x4& m2);
+
+	float Lerp(float x1, float x2, float t);
+
+	Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t);
+
+	//}

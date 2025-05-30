@@ -54,7 +54,8 @@ void GameScene::Initialize() {
 
 	CController_->Reset();                 // リセット
 
-
+	CameraController::Rect cameraArea = {12.0f, 100 - 12.0f, 6.0f, 6.0f};
+	CController_->SetMovableArea(cameraArea);
 }
 
 void GameScene::GenerateBlocks() {
@@ -95,7 +96,7 @@ void GameScene::Update() {
 			if (!worldTransformBlock)
 				continue;
 			// アフィン変換行列の生成
-			worldTransformBlock->matWorld_ = math_->MakeAffineMatrix(worldTransformBlock->scale_, worldTransformBlock->rotation_, worldTransformBlock->translation_);
+			worldTransformBlock->matWorld_ = MakeAffineMatrix(worldTransformBlock->scale_, worldTransformBlock->rotation_, worldTransformBlock->translation_);
 
 			// 定数バッファに転送する
 			worldTransformBlock->TransferMatrix();
@@ -120,6 +121,7 @@ void GameScene::Update() {
 
 		camera_.UpdateMatrix();
 	}
+	CController_->Updata();
 }
 
 void GameScene::Draw() {
