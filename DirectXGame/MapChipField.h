@@ -1,5 +1,12 @@
 #pragma once
+
+#include "KamataEngine.h"
 #include "Math.h"
+#include <cstdint>
+#include <string>
+#include <vector>
+
+using namespace KamataEngine;
 
 enum class MapChipType {
 	kBlank, // 空白
@@ -11,35 +18,41 @@ struct MapChipData {
 };
 
 class MapChipField {
-
 public:
+	// 02_07 スライド22枚目
+	struct IndexSet {
+		uint32_t xIndex;
+		uint32_t yIndex;
+	};
+	// 範囲矩形 02_07 スライド32枚目
+	struct Rect {
+		float left;   // 左端
+		float right;  // 右端
+		float bottom; // 下端
+		float top;    // 上端
+	};
 
-MapChipData mapChipData_;
-
-void ResetMapChipDate();
-
-void LoadMapChipCsv(const std::string& filePath);
-
-MapChipType GetMapChipTypeByIndex(uint32_t xIndex, uint32_t yIndex);
-
-Vector3 GetMapChipPositionByIndex(uint32_t xIndex, uint32_t yIndex);
-
-int GetNumBlockVirtical() { return kNumBlockVirtical; }
-
-int GetNumBlockHorizontal() { return kNumBlockHorizontal; }
-
-private:
-	//1ブロックのサイズ
 	static inline const float kBlockWidth = 1.0f;
-
 	static inline const float kBlockHeight = 1.0f;
 
-	//ブロックの個数
+	void ResetMapChipData();
 
-	//縦
+	void LoadMapChipCsv(const std::string& filePath);
+
+	Vector3 GetMapChipPositionByIndex(uint32_t xIndex, uint32_t yIndex);
+	MapChipType GetMapChipTypeByIndex(uint32_t xIndex, uint32_t yIndex);
+
+	uint32_t GetNumBlockVirtical() const { return kNumBlockVirtical; }
+	uint32_t GetNumBlockHorizontal() const { return kNumBlockHorizontal; }
+
+	// 02_07 スライド22枚目
+	IndexSet GetMapChipIndexSetByPosition(const Vector3& position);
+	// 02_07 スライド33枚目
+	Rect GetRectByIndex(uint32_t xIndex, uint32_t yIndex);
+
+private:
 	static inline const uint32_t kNumBlockVirtical = 20;
-
-	//横
 	static inline const uint32_t kNumBlockHorizontal = 100;
-};
 
+	MapChipData mapChipData_;
+};
