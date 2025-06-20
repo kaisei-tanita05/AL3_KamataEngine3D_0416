@@ -40,7 +40,7 @@ private:
 
 	//Math* math_ = nullptr;
 
-	Vector3 targetOffset_ = {0, 0, -15.0f};
+	Vector3 targetOffset_ = {0, 0, -30.0f};
 
 	// カメラ移動範囲
 	Rect movableArea_ = {0, 100, 0, 100};
