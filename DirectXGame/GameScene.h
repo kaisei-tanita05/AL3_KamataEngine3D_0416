@@ -4,6 +4,7 @@
 #include "Skydome.h"
 #include "MapChipField.h"
 #include "CameraController.h"
+#include "Enemy.h"
 
 using namespace KamataEngine;
 
@@ -50,6 +51,10 @@ private:
 	// 自キャラ
 	Player* player_ = nullptr;
 
+	// 02_09 10枚目 エネミークラス
+	Enemy* enemy_ = nullptr;
+
+
 	//Math* math_ = nullptr;
 
 	//デバッグカメラ有効
@@ -61,9 +66,13 @@ private:
 
 	Model* modelPlayer_ = nullptr;
 
+	Model* enemy_model_ = nullptr;
+
 	MapChipField* mapChipField_;
 
 	CameraController* CController_ = nullptr;
+
+	// 02_09 10枚目 エネミーモデル
 };
 
 

@@ -11,7 +11,7 @@
 
 using namespace KamataEngine;
 
-void Player::Initialize(KamataEngine::Model* model, Camera* camera, const Vector3& position) {
+void Player::Initialize(Model* model, Camera* camera, const Vector3& position) {
 	assert(model);
 
 	model_ = model;
@@ -453,12 +453,8 @@ void Player::UpDate() {
 	//worldTransform_.TransferMatrix();
 
 void Player::Draw() {
-	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
-
-	Model::PreDraw(dxCommon->GetCommandList());
 
 	model_->Draw(worldTransform_, *camera_);
 
-	Model::PostDraw();
 }
 

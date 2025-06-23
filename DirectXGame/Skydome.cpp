@@ -16,11 +16,5 @@ void Skydome::Update()
 
 void Skydome::Draw() { 
 
-	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
-
-	Model::PreDraw(dxCommon->GetCommandList());
-
 	model_->Draw(worldTransform_, *camera_);
-
-	Model::PostDraw();
 }

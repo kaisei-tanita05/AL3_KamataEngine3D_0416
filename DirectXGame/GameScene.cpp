@@ -61,6 +61,15 @@ void GameScene::Initialize() {
 	//自キャラの生成と初期化
 	// 02_07 スライド5枚目
 	player_->SetMapChipField(mapChipField_);
+
+		// 02_09 10枚目 敵クラス
+	enemy_ = new Enemy();
+	// 02_09 10枚目 敵モデル
+	enemy_model_ = Model::CreateFromOBJ("enemy");
+	// 02_09 10枚目 敵位置決めて敵クラス初期化
+	Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(14, 18);
+	enemy_->Initialize(enemy_model_, &camera_, enemyPosition);
+
 }
 
 void GameScene::GenerateBlocks() {
@@ -95,6 +104,9 @@ void GameScene::Update() {
 	// 自キャラの更新
 	player_->UpDate();
 	skydome_->Update();
+	// 02_09 12枚目 敵更新
+	enemy_->UpDate();
+
 
 	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
 		for (WorldTransform*& worldTransformBlock : worldTransformBlockLine) {
@@ -131,11 +143,6 @@ void GameScene::Update() {
 
 void GameScene::Draw() {
 
-	player_->Draw();
-
-	// 天球描画
-	skydome_->Draw();
-
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 
 	Model::PreDraw(dxCommon->GetCommandList());
@@ -148,8 +155,18 @@ void GameScene::Draw() {
 		}
 	}
 
+	player_->Draw();
+
+	// 天球描画
+	skydome_->Draw();
+
+	// 02_09 12枚目 敵更新
+	enemy_->Draw();
+
 	//modelPlayer_->Draw(*worldTransformBlock, camera_);
 	
+
+
 	Model::PostDraw();
 }
 
@@ -174,4 +191,7 @@ GameScene::~GameScene() {
 	worldTransformBlocks_.clear();
 
 	delete mapChipField_;
+
+	// 02_09 10枚目 敵クラス削除
+	delete enemy_;
 }
