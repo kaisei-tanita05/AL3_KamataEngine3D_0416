@@ -89,4 +89,11 @@ using namespace KamataEngine;
 
 	Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t);
 
+	struct AABB {
+	    Vector3 min;
+	    Vector3 max;
+    };
+
+	bool IsCollision(const AABB& aabb1, const AABB& aabb2);
+
 	//}

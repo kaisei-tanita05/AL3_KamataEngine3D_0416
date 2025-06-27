@@ -3,10 +3,18 @@
 #include "Math.h"
 #include "UpData.h"
 #include "MapChipField.h"
+#include "Enemy.h"
+
+#include <cassert>
+#include <numbers>
+#include <algorithm>
 
 class MapChipField;
 
 using namespace KamataEngine;
+
+// 02_10 21枚目
+class Enemy;
 
 class Player 
 {
@@ -52,9 +60,14 @@ public:
 	void SetMapChipField(MapChipField* mapChipField) { mapChipField_ = mapChipField; }
 
 	
-	
+	// 02_10 10枚目 ワールド座標を取得
+	Vector3 GetWorldPosition();
 
+	//AABBを取得
+	AABB GetAABB();
 
+	// 02_10 21枚目 衝突応答
+	void OnCollision(const Enemy* enemy);
 
 private:
 	//ワールド変換データ

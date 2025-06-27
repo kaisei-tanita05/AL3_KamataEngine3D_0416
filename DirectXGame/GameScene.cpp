@@ -4,7 +4,7 @@ using namespace KamataEngine;
 
 void GameScene::Initialize() {
 	// ここにインゲームの初期化処理を書く
-	//textureHandle_ = TextureManager::Load("player.png");
+	// textureHandle_ = TextureManager::Load("player.png");
 
 	////スプライトインスタンスの生成
 	// sprite_ = Sprite::Create(textureHandle_, {100, 50});
@@ -18,13 +18,13 @@ void GameScene::Initialize() {
 	// 自キャラの生成
 	player_ = new Player();
 
-	//座標をマップチップ番号で指定
+	// 座標をマップチップ番号で指定
 	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(1, 18);
 
 	modelPlayer_ = Model::CreateFromOBJ("player", true);
 
 	// 自キャラの初期化
-	player_->Initialize(modelPlayer_, &camera_,playerPosition);
+	player_->Initialize(modelPlayer_, &camera_, playerPosition);
 
 	worldTransform_.Initialize();
 
@@ -48,28 +48,38 @@ void GameScene::Initialize() {
 
 	CController_ = new CameraController(); // 生成
 
-	CController_->Initialize(&camera_);    // 初期化
+	CController_->Initialize(&camera_); // 初期化
 
-	CController_->SetTarget(player_);      // 追従対象セット
+	CController_->SetTarget(player_); // 追従対象セット
 
-	CController_->Reset();                 // リセット
+	CController_->Reset(); // リセット
 
 	CameraController::Rect cameraArea = {12.0f, 100 - 12.0f, 6.0f, 6.0f};
 	CController_->SetMovableArea(cameraArea);
 
-	//マップチップフィールドの生成と初期化
-	//自キャラの生成と初期化
-	// 02_07 スライド5枚目
+	// マップチップフィールドの生成と初期化
+	// 自キャラの生成と初期化
+	//  02_07 スライド5枚目
 	player_->SetMapChipField(mapChipField_);
 
-		// 02_09 10枚目 敵クラス
+	// 02_09 10枚目 敵クラス
 	enemy_ = new Enemy();
 	// 02_09 10枚目 敵モデル
 	enemy_model_ = Model::CreateFromOBJ("enemy");
 	// 02_09 10枚目 敵位置決めて敵クラス初期化
-	Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(14, 18);
-	enemy_->Initialize(enemy_model_, &camera_, enemyPosition);
+	//Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(14, 18);
+	//enemy_->Initialize(enemy_model_, &camera_, enemyPosition);
 
+	// 02_10 5枚目（for文の中身全部）
+	for (int32_t i = 0; i < 3; ++i) {
+		Enemy* newEnemy = new Enemy();
+
+		Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(14 + i * 3, 18);
+
+		newEnemy->Initialize(enemy_model_, &camera_, enemyPosition);
+
+		enemies_.push_back(newEnemy);
+	}
 }
 
 void GameScene::GenerateBlocks() {
@@ -105,8 +115,11 @@ void GameScene::Update() {
 	player_->UpDate();
 	skydome_->Update();
 	// 02_09 12枚目 敵更新
-	enemy_->UpDate();
+	// enemy_->UpDate();
 
+	for (Enemy* enemy : enemies_) {
+		enemy->UpDate();
+	}
 
 	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
 		for (WorldTransform*& worldTransformBlock : worldTransformBlockLine) {
@@ -139,6 +152,9 @@ void GameScene::Update() {
 		camera_.UpdateMatrix();
 	}
 	CController_->Updata();
+
+	// 02_10 22枚目 衝突判定
+	CheckAllCollisions();
 }
 
 void GameScene::Draw() {
@@ -161,13 +177,43 @@ void GameScene::Draw() {
 	skydome_->Draw();
 
 	// 02_09 12枚目 敵更新
-	enemy_->Draw();
+	// enemy_->Draw();
 
-	//modelPlayer_->Draw(*worldTransformBlock, camera_);
-	
+	for (Enemy* enemy : enemies_) {
+		enemy->Draw();
+	}
 
+	// modelPlayer_->Draw(*worldTransformBlock, camera_);
 
 	Model::PostDraw();
+}
+
+// 02_10 16枚目
+void GameScene::CheckAllCollisions() {
+
+	// 判定対象1と2の座標
+	AABB aabb1, aabb2;
+
+#pragma region 自キャラと敵キャラの当たり判定
+	{
+		// 自キャラの座標
+		aabb1 = player_->GetAABB();
+
+		// 自キャラと敵弾全ての当たり判定
+		for (Enemy* enemy : enemies_) {
+			// 敵弾の座標
+			aabb2 = enemy->GetAABB();
+
+			// AABB同士の交差判定
+			if (IsCollision(aabb1, aabb2)) {
+				// 自キャラの衝突時コールバックを呼び出す
+				player_->OnCollision(enemy);
+				// 敵弾の衝突時コールバックを呼び出す
+				enemy->OnCollision(player_);
+			}
+		}
+	}
+#pragma endregion
 }
 
 GameScene::~GameScene() {
@@ -193,5 +239,10 @@ GameScene::~GameScene() {
 	delete mapChipField_;
 
 	// 02_09 10枚目 敵クラス削除
-	delete enemy_;
+	// delete enemy_;
+
+	// 02_10 6枚目 敵クラス削除
+	for (Enemy* enemy : enemies_) {
+		delete enemy;
+	}
 }

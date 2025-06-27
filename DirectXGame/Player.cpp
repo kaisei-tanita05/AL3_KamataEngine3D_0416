@@ -1,13 +1,11 @@
 #define NOMINMAX
 #include "Player.h"
-#include "UpData.h"
-#include <numbers>
-#include <algorithm>
-#include "Math.h"
 #include "MapChipField.h"
+#include "Math.h"
+#include "UpData.h"
+#include <algorithm>
 #include <cassert>
-
-
+#include <numbers>
 
 using namespace KamataEngine;
 
@@ -27,9 +25,9 @@ void Player::Initialize(Model* model, Camera* camera, const Vector3& position) {
 void Player::InputMove() {
 	if (onGround_) {
 
-		//左右操作
+		// 左右操作
 		if (Input::GetInstance()->PushKey(DIK_RIGHT) || Input::GetInstance()->PushKey(DIK_LEFT)) {
-			//左右加速
+			// 左右加速
 			Vector3 acceleration = {};
 			if (Input::GetInstance()->PushKey(DIK_RIGHT)) {
 				if (velocity_.x < 0.0f) {
@@ -47,7 +45,7 @@ void Player::InputMove() {
 				if (velocity_.x > 0.0f) {
 					velocity_.x *= (1.0f - kAttenuation);
 				}
-				acceleration.x -= kAcceleration/60.0f;
+				acceleration.x -= kAcceleration / 60.0f;
 				if (lrDirection_ != LRDirection::kLeft) {
 					lrDirection_ = LRDirection::kLeft;
 
@@ -59,7 +57,7 @@ void Player::InputMove() {
 
 			velocity_.x = std::clamp(velocity_.x, -kLimitRunSpeed, kLimitRunSpeed);
 		} else {
-			//非入力時は移動減衰をかける
+			// 非入力時は移動減衰をかける
 			velocity_.x *= (1.0f - kAcceleration);
 		}
 
@@ -69,11 +67,11 @@ void Player::InputMove() {
 		}
 
 		if (Input::GetInstance()->PushKey(DIK_UP)) {
-			//ジャンプ初速
-			velocity_ = Add(Vector3(0, kJumpAcceleration/60.0f, 0), velocity_);
+			// ジャンプ初速
+			velocity_ = Add(Vector3(0, kJumpAcceleration / 60.0f, 0), velocity_);
 		}
 	} else {
-		//落下速度
+		// 落下速度
 		velocity_ = Add(Vector3(0, -kGravityAcceleration / 60.0f, 0), velocity_);
 		velocity_.y = std::max(velocity_.y, -kLimitFallSpeed);
 	}
@@ -87,9 +85,8 @@ void Player::CheckMapCollision(CollisionMapInfo& info) {
 	CheckMapCollisionRight(info);
 	CheckMapCollisionLeft(info);
 }
-	
 
-//マップ衝突判定上方向
+// マップ衝突判定上方向
 void Player::CheckMapCollisionUp(CollisionMapInfo& info) {
 	// 上昇あり？
 	if (info.move.y <= 0) {
@@ -136,7 +133,6 @@ void Player::CheckMapCollisionUp(CollisionMapInfo& info) {
 		}
 	}
 }
-
 
 // マップ衝突判定下方向
 void Player::CheckMapCollisionDown(CollisionMapInfo& info) {
@@ -256,7 +252,7 @@ void Player::UpdateOnWall(const CollisionMapInfo& info) {
 	}
 }
 
-//マップ衝突判定右方向
+// マップ衝突判定右方向
 void Player::CheckMapCollisionRight(CollisionMapInfo& info) {
 	// 右移動あり？
 	if (info.move.x <= 0) {
@@ -306,7 +302,7 @@ void Player::CheckMapCollisionRight(CollisionMapInfo& info) {
 	}
 }
 
-//マップチップ衝突判定左方向
+// マップチップ衝突判定左方向
 void Player::CheckMapCollisionLeft(CollisionMapInfo& info) {
 
 	// 左移動あり？
@@ -357,8 +353,6 @@ void Player::CheckMapCollisionLeft(CollisionMapInfo& info) {
 	}
 }
 
-
-
 Vector3 Player::CornerPosition(const Vector3& center, Corner corner) {
 
 	Vector3 offsetTable[] = {
@@ -371,22 +365,20 @@ Vector3 Player::CornerPosition(const Vector3& center, Corner corner) {
 	return center + offsetTable[static_cast<uint32_t>(corner)];
 }
 
-
-
 void Player::UpDate() {
-	
+
 	// 移動入力(02_07 スライド10枚目)
 	InputMove();
 
 	// 移動入力
-	//衝突情報を初期化
+	// 衝突情報を初期化
 	CollisionMapInfo collisionMapInfo = {};
 	collisionMapInfo.move = velocity_;
-	//移動量に速度の値をコピー
-	// マップ衝突チェック(02_07 スライド13枚目)
+	// 移動量に速度の値をコピー
+	//  マップ衝突チェック(02_07 スライド13枚目)
 	CheckMapCollision(collisionMapInfo);
 
-	//worldTransform_.translation_ = Add(velocity_, worldTransform_.translation_);
+	// worldTransform_.translation_ = Add(velocity_, worldTransform_.translation_);
 
 	// 移動(02_07 スライド36枚目)
 	worldTransform_.translation_ += collisionMapInfo.move;
@@ -402,25 +394,25 @@ void Player::UpDate() {
 	// 接地判定
 	UpdateOnGround(collisionMapInfo);
 
-	//bool landing = false;
+	// bool landing = false;
 
 	//// 下降あり？
-	//if (velocity_.y < 0) {
+	// if (velocity_.y < 0) {
 	//	// Y座標が地面以下になったら着地
 	//	if (worldTransform_.translation_.y <= 1.0f) {
 	//		landing = true;
 	//	}
-	//}
+	// }
 
 	//// 接地状態
 
 	//// 接地判定
-	//if (onGround_) {
+	// if (onGround_) {
 	//	// ジャンプ開始
 	//	if (velocity_.y > 0.0f) {
 	//		onGround_ = false;
 	//	}
-	//} else {
+	// } else {
 	//	// 着地
 	//	if (landing) {
 	//		worldTransform_.translation_.y = 1.0f;
@@ -428,8 +420,7 @@ void Player::UpDate() {
 	//		velocity_.y = 0.0f;
 	//		onGround_ = true;
 	//	}
-	//}
-
+	// }
 
 	// 旋回制御
 	if (turnTimer_ > 0.0f) {
@@ -446,15 +437,41 @@ void Player::UpDate() {
 	upData->WorldTransformUpData(worldTransform_);
 }
 
-	//// アフィン変換行列の生成
-	//worldTransform_.matWorld_ = MakeAffineMatrix(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
+//// アフィン変換行列の生成
+// worldTransform_.matWorld_ = MakeAffineMatrix(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
 
-	//// 定数バッファに転送する
-	//worldTransform_.TransferMatrix();
+//// 定数バッファに転送する
+// worldTransform_.TransferMatrix();
 
-void Player::Draw() {
+void Player::Draw() { model_->Draw(worldTransform_, *camera_); }
 
-	model_->Draw(worldTransform_, *camera_);
+// 02_10 10枚目
+Vector3 Player::GetWorldPosition() {
 
+	Vector3 worldPos;
+	// ワールド行列の平行移動成分を取得（ワールド座標）
+	worldPos.x = worldTransform_.matWorld_.m[3][0];
+	worldPos.y = worldTransform_.matWorld_.m[3][1];
+	worldPos.z = worldTransform_.matWorld_.m[3][2];
+	return worldPos;
 }
 
+// 02_10 14枚目
+AABB Player::GetAABB() {
+
+	Vector3 worldPos = GetWorldPosition();
+
+	AABB aabb;
+
+	aabb.min = {worldPos.x - kWidth / 2.0f, worldPos.y - kHeight / 2.0f, worldPos.z - kWidth / 2.0f};
+	aabb.max = {worldPos.x + kWidth / 2.0f, worldPos.y + kHeight / 2.0f, worldPos.z + kWidth / 2.0f};
+
+	return aabb;
+}
+
+// 02_10 21枚目
+void Player::OnCollision(const Enemy* enemy) {
+	(void)enemy;
+	// ジャンプ初速
+	velocity_ += Vector3(0, kJumpAcceleration / 60.0f, 0);
+}
