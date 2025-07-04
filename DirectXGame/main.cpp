@@ -1,5 +1,73 @@
 #include <Windows.h>
 #include "GameScene.h"
+#include "TitleScene.h"
+
+	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
+
+	TitleScene* titleScene = nullptr;
+
+	// 02_12 25枚目(Scene sceneまで)
+    enum class Scene {
+	    kUnknown = 0,
+	    kTitle,
+	    kGame,
+    };
+
+	// 現在シーン（型）
+    Scene scene = Scene::kUnknown;
+
+    // 02_12 29枚目
+    void ChangeScene() {
+
+	    switch (scene) {
+	    case Scene::kTitle:
+		    if (titleScene->IsFinished()) {
+			    // シーン変更
+			    scene = Scene::kGame;
+			    delete titleScene;
+			    titleScene = nullptr;
+			    gameScene = new GameScene;
+			    gameScene->Initialize();
+		    }
+		    break;
+	    case Scene::kGame:
+		    // 02_12 30枚目
+		    if (gameScene->IsFinished()) {
+			    // シーン変更
+			    scene = Scene::kTitle;
+			    delete gameScene;
+			    gameScene = nullptr;
+			    titleScene = new TitleScene;
+			    titleScene->Initialize();
+		    }
+		    break;
+	    }
+    }
+
+    // 02_12 31枚目
+    void UpdateScene() {
+
+	    switch (scene) {
+	    case Scene::kTitle:
+		    titleScene->Update();
+		    break;
+	    case Scene::kGame:
+		    gameScene->Update();
+		    break;
+	    }
+    }
+
+    // 02_12 32枚目
+    void DrawScene() {
+	    switch (scene) {
+	    case Scene::kTitle:
+		    titleScene->Draw();
+		    break;
+	    case Scene::kGame:
+		    gameScene->Draw();
+		    break;
+	    }
+    }
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
@@ -9,13 +77,13 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	KamataEngine::Initialize();
 
-	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 
 	GameScene* gameScene = new GameScene();
 
 	
 	gameScene->Initialize();
 	
+
 
 	//メインループ
 	while (true) 
@@ -44,6 +112,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	}
 
 	// ゲームシーンの解放
+	// 02_12 35枚目 各種解放
+	delete titleScene;
 	delete gameScene;
 
 	// nullptrの代入
