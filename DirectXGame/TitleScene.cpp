@@ -50,6 +50,8 @@ void TitleScene::Update() {
 
 	camera_.TransferMatrix();
 
+	upData->WorldTransformUpData(worldTransformTitle_);
+
 	// アフィン変換～DirectXに転送(タイトル座標)
 	upData->WorldTransformUpData(worldTransformPlayer_);
 }
