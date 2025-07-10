@@ -6,6 +6,7 @@
 #include "CameraController.h"
 #include "Enemy.h"
 #include "DeathParticles.h"
+#include "Fade.h"
 
 using namespace KamataEngine;
 
@@ -101,6 +102,9 @@ private:
 
 	// 02_12 26枚目
 	bool finished_ = false;
+
+	// 02_13 28枚目
+	Fade* fade_ = nullptr;
 };
 
 

@@ -93,6 +93,11 @@ void GameScene::Initialize() {
 
 	// 02_12 4枚目 ゲームプレイフェーズから開始
 	phase_ = Phase::kPlay;
+
+		// 02_13 27枚目
+	fade_ = new Fade();
+	fade_->Initialize();
+	fade_->Start(Fade::Status::FadeIn, 1.0f);
 }
 
 void GameScene::GenerateBlocks() {

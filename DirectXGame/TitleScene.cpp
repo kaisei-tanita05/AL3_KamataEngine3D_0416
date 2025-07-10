@@ -5,6 +5,7 @@
 TitleScene::~TitleScene() {
 	delete modelPlayer_;
 	delete modelTitle_;
+	delete fade_;
 }
 
 void TitleScene::Initialize() {
@@ -32,14 +33,42 @@ void TitleScene::Initialize() {
 	worldTransformPlayer_.translation_.x = -2.0f;
 
 	worldTransformPlayer_.translation_.y = -10.0f;
+
+	fade_ = new Fade();
+	fade_->Initialize();
+
+		// 02_13 22枚目
+	fade_->Start(Fade::Status::FadeIn, 5.0f);
 }
 
 void TitleScene::Update() {
 
-	// 02_12 27枚目
-	if (Input::GetInstance()->PushKey(DIK_SPACE)) {
-		finished_ = true;
+	// 02_13 27枚目
+	switch (phase_) {
+	case Phase::kFadeIn:
+		fade_->Update();
+
+		if (fade_->IsFinished()) {
+			phase_ = Phase::kMain;
+		}
+		break;
+	case Phase::kMain:
+		if (Input::GetInstance()->PushKey(DIK_SPACE)) {
+			fade_->Start(Fade::Status::FadeOut, 1.0f);
+			phase_ = Phase::kFadeOut;
+		}
+		break;
+	case Phase::kFadeOut:
+		fade_->Update();
+		if (fade_->IsFinished()) {
+			finished_ = true;
+		}
+		break;
 	}
+	// 02_12 27枚目
+	/*if (Input::GetInstance()->PushKey(DIK_SPACE)) {
+		finished_ = true;
+	}*/
 
 	counter_ += 1.0f / 60.0f;
 	counter_ = std::fmod(counter_, kTimeTitleMove);
@@ -54,6 +83,7 @@ void TitleScene::Update() {
 
 	// アフィン変換～DirectXに転送(タイトル座標)
 	upData->WorldTransformUpData(worldTransformPlayer_);
+
 }
 
 void TitleScene::Draw() {
@@ -66,6 +96,8 @@ void TitleScene::Draw() {
 
 	modelTitle_->Draw(worldTransformTitle_, camera_);
 	modelPlayer_->Draw(worldTransformPlayer_, camera_);
-
 	Model::PostDraw();
+
+	//02_13 13枚目
+	fade_->Draw();
 }
