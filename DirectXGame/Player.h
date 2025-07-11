@@ -72,6 +72,9 @@ public:
 	// 02_12 11枚目 デスフラグ
 	bool IsDead() const { return isDead_; }
 
+	//通常行動更新
+	void BehavoirRootUpdate();
+
 private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;

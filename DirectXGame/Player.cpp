@@ -436,11 +436,50 @@ void Player::UpDate() {
 	upData->WorldTransformUpData(worldTransform_);
 }
 
-//// アフィン変換行列の生成
-// worldTransform_.matWorld_ = MakeAffineMatrix(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
+void Player::BehavoirRootUpdate() 
+{
+	
+	// 移動入力(02_07 スライド10枚目)
+	InputMove();
 
-//// 定数バッファに転送する
-// worldTransform_.TransferMatrix();
+	// 移動入力
+	// 衝突情報を初期化
+	CollisionMapInfo collisionMapInfo = {};
+	collisionMapInfo.move = velocity_;
+	// 移動量に速度の値をコピー
+	//  マップ衝突チェック(02_07 スライド13枚目)
+	CheckMapCollision(collisionMapInfo);
+
+	// worldTransform_.translation_ = Add(velocity_, worldTransform_.translation_);
+
+	// 移動(02_07 スライド36枚目)
+	worldTransform_.translation_ += collisionMapInfo.move;
+
+	// 天井接触による落下開始(02_07 スライド38枚目)
+	if (collisionMapInfo.ceiling) {
+		velocity_.y = 0;
+	}
+
+	// 02_08 スライド27枚目 壁接触している場合の処理
+	UpdateOnWall(collisionMapInfo);
+
+	// 接地判定
+	UpdateOnGround(collisionMapInfo);
+
+	if (turnTimer_ > 0.0f) {
+		// タイマーを進める
+		turnTimer_ = std::max(turnTimer_ - (1.0f / 60.0f), 0.0f);
+
+		float destinationRotationYTable[] = {std::numbers::pi_v<float> / 2.0f, std::numbers::pi_v<float> * 3.0f / 2.0f};
+
+		float destinationRotationY = destinationRotationYTable[static_cast<uint32_t>(lrDirection_)];
+
+		worldTransform_.rotation_.y = EaseInOut(destinationRotationY, turnFirstRotationY_, turnTimer_ / kTimeTurn);
+	}
+
+
+	
+}
 
 void Player::Draw() { model_->Draw(worldTransform_, *camera_); }
 
@@ -475,3 +514,5 @@ void Player::OnCollision(const Enemy* enemy) {
 	// 02_12 12枚目 書き換え
 	isDead_ = true;
 }
+
+
