@@ -67,6 +67,12 @@ using namespace KamataEngine;
 	Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate);
 
 	//イージング
+
+	float EaseIn(float x1, float x2, float t);
+
+    float EaseOut(float x1, float x2, float t);
+
+
 	float EaseInOut(float start, float end, float t);
 
 	Vector3& operator+=(Vector3& lhv, const Vector3& rhv);
