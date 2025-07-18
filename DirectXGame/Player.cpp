@@ -645,6 +645,12 @@ AABB Player::GetAABB() {
 
 // 02_10 21枚目
 void Player::OnCollision(const Enemy* enemy) {
+
+		// 02_15 20枚目
+	if (IsAttack()) {
+		return; // 攻撃中はダメージ無効
+	}
+
 	(void)enemy;
 
 	// 02_12 12枚目 書き換え

@@ -36,7 +36,7 @@ GameScene::~GameScene() {
 
 void GameScene::Initialize() {
 	// ここにインゲームの初期化処理を書く
-	//textureHandle_ = TextureManager::Load("player.png");
+	// textureHandle_ = TextureManager::Load("player.png");
 
 	////スプライトインスタンスの生成
 	sprite_ = Sprite::Create(textureHandle_, {100, 50});
@@ -51,7 +51,6 @@ void GameScene::Initialize() {
 	blockModel_ = Model::CreateFromOBJ("block");
 
 	debugCamera_ = new DebugCamera(WinApp::kWindowWidth, WinApp::kWindowHeight);
-
 
 	camera_.farZ = 1000.0f;
 
@@ -82,8 +81,7 @@ void GameScene::Initialize() {
 	player_->SetMapChipField(mapChipField_);
 
 	// 自キャラの初期化
-	player_->Initialize(modelPlayer_,modelAttack_, &camera_, playerPosition);
-
+	player_->Initialize(modelPlayer_, modelAttack_, &camera_, playerPosition);
 
 	CController_ = new CameraController(); // 生成
 
@@ -237,6 +235,15 @@ void GameScene::Update() {
 	// }
 #pragma endregion
 
+	// 02_15 7枚目 デスフラグの立った敵を削除
+	enemies_.remove_if([](Enemy* enemy) {
+		if (enemy->IsDead()) {
+			delete enemy;
+			return true;
+		}
+		return false;
+	});
+
 	ChangePhase();
 
 	switch (phase_) {
@@ -285,7 +292,8 @@ void GameScene::Update() {
 		for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
 			for (WorldTransform*& worldTransformBlock : worldTransformBlockLine) {
 
-				if (!worldTransformBlock)continue;
+				if (!worldTransformBlock)
+					continue;
 
 				// アフィン変換～DirectXに転送
 				upData->WorldTransformUpData(*worldTransformBlock);
@@ -298,7 +306,6 @@ void GameScene::Update() {
 
 		//   skydome生成
 		skydome_->Update();
-
 
 		CController_->Updata();
 
@@ -439,6 +446,11 @@ void GameScene::CheckAllCollisions() {
 
 		// 自キャラと敵弾全ての当たり判定
 		for (Enemy* enemy : enemies_) {
+
+			// コリジョン無効の敵はスキップ
+			if (enemy->IsCollisionDisabled())
+				continue;
+
 			// 敵弾の座標
 			aabb2 = enemy->GetAABB();
 

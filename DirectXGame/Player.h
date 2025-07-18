@@ -91,6 +91,10 @@ public:
 	// 02_14 16枚目 攻撃行動初期化
 	void BehaviorAttackInitialize();
 
+	// 02_15 14枚目
+	bool IsAttack() const { return behavior_ == Behavior::kAttack && attackPhase_ == AttackPhase::kAction; }
+ 
+
 private:
 	// ワールド変換データ
 	WorldTransform worldTransform_;
