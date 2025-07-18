@@ -4,7 +4,6 @@
 #include "UpData.h"
 #include "MapChipField.h"
 #include "Enemy.h"
-
 #include <cassert>
 #include <numbers>
 #include <algorithm>
@@ -16,24 +15,16 @@ using namespace KamataEngine;
 // 02_10 21枚目
 class Enemy;
 
-class Player 
-{
+class Player {
 public:
-
-	//左右
+	// 左右
 	enum class LRDirection {
 		kRight,
 		kLeft,
 	};
 
 	// 角 02_07スライド16枚目
-	enum Corner { 
-		kRightBottom,
-		kLeftBottom,
-		kRightTop,
-		kLeftTop,
-		kNumCorner 
-	};
+	enum Corner { kRightBottom, kLeftBottom, kRightTop, kLeftTop, kNumCorner };
 
 	// 02_14 11枚目 振るまい
 	enum class Behavior {
@@ -54,7 +45,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(Model*model_,Camera*camera_,const Vector3 &position);
+	void Initialize(Model* model_, Model* modelAttack, Camera* camera_, const Vector3& position);
 
 	/// <summary>
 	/// 更新
@@ -75,11 +66,10 @@ public:
 	// 02_07 スライド4枚目
 	void SetMapChipField(MapChipField* mapChipField) { mapChipField_ = mapChipField; }
 
-	
 	// 02_10 10枚目 ワールド座標を取得
 	Vector3 GetWorldPosition();
 
-	//AABBを取得
+	// AABBを取得
 	AABB GetAABB();
 
 	// 02_10 21枚目 衝突応答
@@ -88,10 +78,9 @@ public:
 	// 02_12 11枚目 デスフラグ
 	bool IsDead() const { return isDead_; }
 
-	//通常行動更新
-	// 02_14 6枚目 通常行動更新
+	// 通常行動更新
+	//  02_14 6枚目 通常行動更新
 	void BehavoirRootUpdate();
-
 
 	// 02_14 8枚目 攻撃行動更新
 	void BehaviorAttackUpdate();
@@ -103,11 +92,13 @@ public:
 	void BehaviorAttackInitialize();
 
 private:
-	//ワールド変換データ
+	// ワールド変換データ
 	WorldTransform worldTransform_;
 
-	//モデル
+	// モデル
 	Model* model_ = nullptr;
+
+	Model* modelAttack_ = nullptr;
 
 	//テクスチャハンドル
 	// uint32_t textureHandle_ = 0u;

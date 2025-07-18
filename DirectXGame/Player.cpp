@@ -1,11 +1,6 @@
 #define NOMINMAX
 #include "Player.h"
-#include "MapChipField.h"
-#include "Math.h"
-#include "UpData.h"
-#include <algorithm>
-#include <cassert>
-#include <numbers>
+
 
 using namespace KamataEngine;
 
@@ -112,6 +107,7 @@ void Player::BehavoirRootUpdate() {
 	// 接地判定
 	UpdateOnGround(collisionMapInfo);
 
+	//旋回制御
 	if (turnTimer_ > 0.0f) {
 		// タイマーを進める
 		turnTimer_ = std::max(turnTimer_ - (1.0f / 60.0f), 0.0f);
@@ -124,7 +120,7 @@ void Player::BehavoirRootUpdate() {
 	}
 
 	// 02_14 18枚目 攻撃キーを押したら
-	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
+	if (Input::GetInstance()->TriggerKey(DIK_E)) {	
 		// 攻撃ビヘイビアをリクエスト
 		behaviorRequest_ = Behavior::kAttack;
 	}
@@ -178,6 +174,7 @@ void Player::BehaviorAttackUpdate() {
 		}
 		break;
 	}
+
 	// 02_14 27枚目
 	case AttackPhase::kAction: { // 突進動作
 		if (lrDirection_ == LRDirection::kRight) {
@@ -195,13 +192,14 @@ void Player::BehaviorAttackUpdate() {
 			attackPhase_ = AttackPhase::kRecovery;
 			attackParameter_ = 0; // パラメータをリセット
 		}
-	} break;
+	} 
+	break;
 	// 02_14 28枚目
 	case AttackPhase::kRecovery: { // 余韻動作
 		velocity = {};
 		float t = static_cast<float>(attackParameter_) / kRecoveryTime;
-		worldTransform_.scale_.z = EaseOut(1.3f, 1.0f, t);
-		worldTransform_.scale_.y = EaseOut(0.7f, 1.0f, t);
+		worldTransform_.scale_.z = EaseInOut(1.3f, 1.0f, t);
+		worldTransform_.scale_.y = EaseInOut(0.7f, 1.0f, t);
 
 		// 通常行動に戻る
 		if (attackParameter_ >= kRecoveryTime) {
@@ -238,11 +236,18 @@ void Player::BehaviorAttackUpdate() {
 	worldTransformAttack_.rotation_ = worldTransform_.rotation_;
 }
 
-void Player::Initialize(Model* model, Camera* camera, const Vector3& position) {
+void Player::Initialize(Model* model, Model* modelAttack, Camera* camera, const Vector3& position) {
 	assert(model);
 
 	model_ = model;
+	modelAttack_ = modelAttack;
 	camera_ = camera;
+
+	worldTransformAttack_.Initialize();
+
+	worldTransformAttack_.translation_ = position;
+
+	worldTransformAttack_.rotation_.y = std::numbers::pi_v<float> / 2.0f;
 
 	worldTransform_.Initialize();
 
@@ -600,7 +605,19 @@ Vector3 Player::CornerPosition(const Vector3& center, Corner corner) {
 
 
 
-void Player::Draw() { model_->Draw(worldTransform_, *camera_); }
+void Player::Draw() { 
+	model_->Draw(worldTransform_, *camera_); 
+	if (behavior_ == Behavior::kAttack) {
+		switch (attackPhase_) {
+		case AttackPhase::kAnticipation:
+			break;
+		case AttackPhase::kAction:
+		case AttackPhase::kRecovery:
+			modelAttack_->Draw(worldTransformAttack_, *camera_);
+			break;
+		}
+	}
+}
 
 // 02_10 10枚目
 Vector3 Player::GetWorldPosition() {
