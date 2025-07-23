@@ -32,6 +32,11 @@ GameScene::~GameScene() {
 	// 02_11_17枚目
 	delete deathParticles_;
 	delete deathParticle_model_;
+
+	// 02_16 17枚目
+	for (HitEffect* hitEffect : hitEffects_) {
+		delete hitEffect;
+	}
 }
 
 void GameScene::Initialize() {
@@ -120,6 +125,14 @@ void GameScene::Initialize() {
 	// 02_11_16枚目 モデル読み込み
 	deathParticle_model_ = Model::CreateFromOBJ("deathParticle");
 
+	// 02_16
+	particle_model_ = Model::CreateFromOBJ("particle");
+
+	// 02_11_16枚目 仮の生成処理 後で消す
+	// 02_12 13枚目で消す
+	deathParticles_ = new DeathParticles;
+	deathParticles_->Initialize(deathParticle_model_, &camera_, playerPosition);
+
 	//// 02_11_16枚目 仮の生成処理 後で消す
 	// deathParticles_ = new DeathParticles;
 	// deathParticles_->Initialize(deathParticle_model_, &camera_, playerPosition);
@@ -131,6 +144,9 @@ void GameScene::Initialize() {
 	fade_ = new Fade();
 	fade_->Initialize();
 	fade_->Start(Fade::Status::FadeIn, 1.0f);
+
+	HitEffect::SetModel(particle_model_);
+	HitEffect::SetCamera(&camera_);
 }
 
 void GameScene::ChangePhase() {

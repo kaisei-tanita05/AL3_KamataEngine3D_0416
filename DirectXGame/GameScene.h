@@ -8,6 +8,7 @@
 #include "DeathParticles.h"
 #include "Fade.h"
 #include "UpData.h"
+#include "HitEffect.h"
 
 using namespace KamataEngine;
 
@@ -113,6 +114,12 @@ private:
 	Fade* fade_ = nullptr;
 
 	UpData* upData = nullptr;
+
+	// 02_16
+	Model* particle_model_ = nullptr;
+
+	// 02_16 17枚目
+	std::list<HitEffect*> hitEffects_;
 };
 
 
