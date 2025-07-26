@@ -2,6 +2,14 @@
 
 using namespace KamataEngine;
 
+// エフェクトを生成
+void GameScene::CreateHitEffect(const Vector3& position) {
+
+	HitEffect* newHitEffect = HitEffect::Create(position);
+
+	hitEffects_.push_back(newHitEffect);
+}
+
 GameScene::~GameScene() {
 	delete sprite_;
 
@@ -118,7 +126,7 @@ void GameScene::Initialize() {
 		Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(14 + i * 3, 18);
 
 		newEnemy->Initialize(enemy_model_, &camera_, enemyPosition);
-
+		newEnemy->SetGameScene(this);
 		enemies_.push_back(newEnemy);
 	}
 
@@ -251,6 +259,16 @@ void GameScene::Update() {
 	// }
 #pragma endregion
 
+	// デスフラグの立ったエフェクトを削除
+	hitEffects_.remove_if([](HitEffect* hitEffect) {
+		if (hitEffect->IsDead()) {
+			delete hitEffect;
+
+			return true;
+		}
+		return false;
+	});
+
 	// 02_15 7枚目 デスフラグの立った敵を削除
 	enemies_.remove_if([](Enemy* enemy) {
 		if (enemy->IsDead()) {
@@ -281,6 +299,10 @@ void GameScene::Update() {
 
 		for (Enemy* enemy : enemies_) {
 			enemy->UpDate();
+		}
+
+		for (HitEffect* hitEffect : hitEffects_) {
+			hitEffect->Update();
 		}
 
 		// UpdateCamera();
@@ -332,6 +354,10 @@ void GameScene::Update() {
 			enemy->UpDate();
 		}
 
+		for (HitEffect* hitEffect : hitEffects_) {
+			hitEffect->Update();
+		}
+
 #ifdef _DEBUG
 		if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
 			// フラグをトグル
@@ -363,6 +389,10 @@ void GameScene::Update() {
 		}
 
 		CheckAllCollisions();
+
+		for (HitEffect* hitEffect : hitEffects_) {
+			hitEffect->Update();
+		}
 		break;
 
 	case Phase::kDeath:
@@ -381,9 +411,14 @@ void GameScene::Update() {
 			enemy->UpDate();
 		}
 
+
 		// 02_11 18枚目 デスパーティクルあれば更新
 		if (deathParticles_) {
 			deathParticles_->Update();
+		}
+
+		for (HitEffect* hitEffect : hitEffects_) {
+			hitEffect->Update();
 		}
 
 		break;
@@ -399,6 +434,10 @@ void GameScene::Update() {
 
 		for (Enemy* enemy : enemies_) {
 			enemy->UpDate();
+		}
+
+		for (HitEffect* hitEffect : hitEffects_) {
+			hitEffect->Update();
 		}
 
 		break;
@@ -435,6 +474,10 @@ void GameScene::Draw() {
 	// 02_11 18枚目 デスパーティクルあれば描画
 	if (deathParticles_) {
 		deathParticles_->Draw();
+	}
+
+	for (HitEffect* hitEffect : hitEffects_) {
+		hitEffect->Draw();
 	}
 
 	Model::PostDraw();

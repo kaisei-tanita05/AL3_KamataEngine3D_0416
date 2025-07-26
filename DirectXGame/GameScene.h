@@ -39,6 +39,10 @@ public:
 	// 02_12 26枚目	デスフラグのgetter
 	bool IsFinished() const { return finished_; }
 
+
+	// エフェクトを生成
+	void CreateHitEffect(const Vector3& position);
+
 private:
 	// 02_12 4枚目 ゲームのフェーズ（型）
 	enum class Phase {
@@ -115,11 +119,11 @@ private:
 
 	UpData* upData = nullptr;
 
-	// 02_16
-	Model* particle_model_ = nullptr;
-
 	// 02_16 17枚目
 	std::list<HitEffect*> hitEffects_;
+
+	// 02_16
+	Model* particle_model_ = nullptr;
 };
 
 

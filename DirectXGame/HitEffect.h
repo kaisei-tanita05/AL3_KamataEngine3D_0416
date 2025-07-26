@@ -1,6 +1,7 @@
 #pragma once
 #include <KamataEngine.h>
 #include <cstdint>
+#include "UpData.h"
 
 using namespace KamataEngine;
 
@@ -27,7 +28,9 @@ public:
 
 	void Draw();
 
-	static HitEffect* Create(const KamataEngine::Vector3& position);
+	static HitEffect* Create(const Vector3& position);
+
+	bool IsDead() const { return state_ == State::kDead; }
 
 private:
 	// モデル(借りてくる用)
@@ -35,4 +38,30 @@ private:
 
 	// カメラ(借りてくる用)
 	static Camera* camera_;
+
+	UpData* upData = nullptr;
+
+	//円のワールドトランスフォーム
+	WorldTransform circleWorldTransform_;
+
+	State state_ = State::kSpread;
+
+	ObjectColor objectColor_;
+
+	// カウンター
+	uint32_t counter_ = 0;
+
+	// 拡大アニメーションの時間
+	static inline const uint32_t kSpreadTime = 10;
+
+	// フェードアウトアニメーションの時間
+	static inline const uint32_t kFadeTime = 20;
+
+
+	// 楕円エフェクトの数
+	static const inline uint32_t kellipseEffectNum = 2;
+
+	// 楕円のワールドトランスフォーム
+	std::array<WorldTransform, kellipseEffectNum> ellipseWorldTransforms_;
+
 };

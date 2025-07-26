@@ -1,7 +1,9 @@
+#define NOMINMAX
 #include "Enemy.h"
 #include "MapChipField.h"
 #include "Math.h"
 #include "UpData.h"
+#include "GameScene.h"
 #include <algorithm>
 #include <cassert>
 #include <numbers>
@@ -144,8 +146,26 @@ void Enemy::OnCollision(const Player* player) {
 	// プレイヤーが攻撃中なら敵が死ぬ
 	// player.hをインクルード
 	if (player->IsAttack()) {
+
+		if (gameScene_) {
+
+			Vector3 pos = player->GetWorldPosition();
+
 		// 敵の振るまいをやられに変更
 		behaviorRequest_ = Behavior::kDefeated;
+
+
+			// 敵と自キャラの中間位置にエフェクトを生成
+			Vector3 effectPos;
+
+			effectPos.x = (GetWorldPosition() + pos).x / 2.0f;
+			effectPos.y = (GetWorldPosition() + pos).y / 2.0f;
+			effectPos.z = (GetWorldPosition() + pos).z / 2.0f;
+			gameScene_->CreateHitEffect(effectPos);
+		}
+
+
+
 
 		// 02_15 20枚目 衝突を無効化
 		isCollisionDisabled_ = true;

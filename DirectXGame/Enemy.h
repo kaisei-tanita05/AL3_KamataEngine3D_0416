@@ -4,12 +4,14 @@
 #include "Math.h"
 #include "UpData.h"
 #include "Player.h"
+#include "HitEffect.h"
 
 
 using namespace KamataEngine;
 
 // 02_10 20枚目
 class Player;
+class GameScene;
 
 /// <summary>
 /// 敵
@@ -53,6 +55,9 @@ public:
 
 	// 02_15 20枚目
 	bool IsCollisionDisabled() const { return isCollisionDisabled_; }
+
+	// 02_16 19
+	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
 
 private:
 	// ワールド変換データ
@@ -105,4 +110,6 @@ private:
 	// 02_15 20枚目
 	bool isCollisionDisabled_ = false;
 
+	// 02_16 19
+	GameScene* gameScene_ = nullptr;
 };
