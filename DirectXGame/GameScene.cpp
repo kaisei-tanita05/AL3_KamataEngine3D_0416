@@ -24,7 +24,15 @@ GameScene::~GameScene() {
 		}
 	}
 
+	for (std::vector<VisibleBlock*>& worldTransformBlockLine : worldTransformVisibleBlocks_) {
+		for (VisibleBlock* worldTransformBlock : worldTransformBlockLine) {
+			delete worldTransformBlock;
+		}
+	}
+
 	worldTransformBlocks_.clear();
+
+	worldTransformVisibleBlocks_.clear();
 
 	delete skydome_;
 
@@ -156,7 +164,7 @@ void GameScene::Initialize() {
 	HitEffect::SetModel(particle_model_);
 	HitEffect::SetCamera(&camera_);
 
-	//player_->SetDead();
+	// player_->SetDead();
 }
 
 void GameScene::ChangePhase() {
@@ -183,8 +191,8 @@ void GameScene::ChangePhase() {
 
 void GameScene::GenerateBlocks() {
 	// 要素数
-	uint32_t numBlockVirtical = mapChipField_->GetNumBlockVirtical();//横の数
-	uint32_t numBlockHorizontal = mapChipField_->GetNumBlockHorizontal();//縦の数
+	uint32_t numBlockVirtical = mapChipField_->GetNumBlockVirtical();     // 横の数
+	uint32_t numBlockHorizontal = mapChipField_->GetNumBlockHorizontal(); // 縦の数
 
 	// 要素数を変更する
 
@@ -194,6 +202,13 @@ void GameScene::GenerateBlocks() {
 	for (uint32_t i = 0; i < numBlockVirtical; ++i) {
 		worldTransformBlocks_[i].resize(numBlockHorizontal);
 	}
+
+	////////////////////////////////////////////////////////////////////
+	worldTransformVisibleBlocks_.resize(numBlockVirtical);
+	for (uint32_t i = 0; i < numBlockVirtical; ++i) {
+		worldTransformVisibleBlocks_[i].resize(numBlockHorizontal);
+	}
+
 	// ブロックの生成
 	for (uint32_t i = 0; i < numBlockVirtical; ++i) {
 		for (uint32_t j = 0; j < numBlockHorizontal; ++j) {
@@ -208,6 +223,15 @@ void GameScene::GenerateBlocks() {
 				worldTransform->Initialize();
 				worldTransformBlocks_[i][j] = worldTransform;
 				worldTransformBlocks_[i][j]->translation_ = mapChipField_->GetMapChipPositionByIndex(j, i);
+			}
+			if (mapChipField_->GetMapChipTypeByIndex(j, i) == MapChipType::kTrap2) {
+				VisibleBlock* visibleBlock = new VisibleBlock();
+				visibleBlock->worldTransform = new WorldTransform();
+				visibleBlock->worldTransform->Initialize();
+				visibleBlock->worldTransform->translation_ = mapChipField_->GetMapChipPositionByIndex(j, i);
+				visibleBlock->isVisible = true;
+
+				worldTransformVisibleBlocks_[i][j] = visibleBlock;
 			}
 		}
 	}
@@ -360,7 +384,7 @@ void GameScene::Update() {
 
 		// プレイヤーが下に落ちすぎたら死亡扱いにしてフェーズを変更
 		if (player_->GetWorldPosition().y < -6.0f) { // 閾値は環境に応じて調整
-			player_->SetDead();                        // プレイヤーを死亡状態にする関数
+			player_->SetDead();                      // プレイヤーを死亡状態にする関数
 
 			phase_ = Phase::kDeath;
 
@@ -410,11 +434,24 @@ void GameScene::Update() {
 
 		CheckAllCollisions();
 
-		for (HitEffect* hitEffect : hitEffects_) {
-			hitEffect->Update();
+		AABB playerAABB = player_->GetAABB();
+
+		for (uint32_t i = 0; i < worldTransformVisibleBlocks_.size(); ++i) {
+			for (uint32_t j = 0; j < worldTransformVisibleBlocks_[i].size(); ++j) {
+				VisibleBlock* block = worldTransformVisibleBlocks_[i][j];
+
+				if (!block->worldTransform || block->isVisible) {
+					continue; // nullまたは既に可視ならスキップ
+				}
+
+				AABB blockAABB = visibleBlock_->GetAABB();
+
+				if (IsCollision(playerAABB, blockAABB)) {
+					block->isVisible = true; // 衝突したら可視化
+				}
+			}
 		}
 		break;
-
 	case Phase::kDeath:
 		// デス演出フェーズ
 
@@ -430,7 +467,6 @@ void GameScene::Update() {
 		for (Enemy* enemy : enemies_) {
 			enemy->UpDate();
 		}
-
 
 		// 02_11 18枚目 デスパーティクルあれば更新
 		if (deathParticles_) {
@@ -459,7 +495,6 @@ void GameScene::Update() {
 		for (HitEffect* hitEffect : hitEffects_) {
 			hitEffect->Update();
 		}
-
 		break;
 	}
 }
@@ -483,6 +518,15 @@ void GameScene::Draw() {
 			if (!worldTransformBlock)
 				continue;
 			blockModel_->Draw(*worldTransformBlock, camera_);
+		}
+	}
+
+	for (const auto& blockLine : worldTransformVisibleBlocks_) {
+		for (const VisibleBlock* block : blockLine) { // `VisibleBlock*` に変更
+			if (!block || !block->worldTransform || !block->isVisible) {
+				continue;
+			}
+			blockModel_->Draw(*block->worldTransform, camera_);
 		}
 	}
 

@@ -9,6 +9,7 @@
 #include "Fade.h"
 #include "UpData.h"
 #include "HitEffect.h"
+#include "VisibleBlock.h"
 
 using namespace KamataEngine;
 
@@ -71,10 +72,13 @@ private:
 	WorldTransform worldTransform_;
 	
 
+
 	////カメラ
 	Camera camera_;
 
 	std::vector<std::vector<WorldTransform*>> worldTransformBlocks_;
+
+	std::vector<std::vector<VisibleBlock*>> worldTransformVisibleBlocks_;
 
 	DebugCamera* debugCamera_ = nullptr;
 
@@ -84,6 +88,7 @@ private:
 	// 02_09 10枚目 エネミークラス
 	Enemy* enemy_ = nullptr;
 
+	VisibleBlock* visibleBlock_ = nullptr;
 
 	//Math* math_ = nullptr;
 
