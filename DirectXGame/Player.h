@@ -78,6 +78,8 @@ public:
 	// 02_12 11枚目 デスフラグ
 	bool IsDead() const { return isDead_; }
 
+	bool IsHit() const { return isHit_; }
+
 	// 通常行動更新
 	//  02_14 6枚目 通常行動更新
 	void BehavoirRootUpdate();
@@ -95,6 +97,8 @@ public:
 	bool IsAttack() const { return behavior_ == Behavior::kAttack && attackPhase_ == AttackPhase::kAction; }
  
 	void SetDead() { isDead_ = true; }
+
+	void SetHit() { isHit_ = true; }
 
 private:
 	// ワールド変換データ
@@ -199,6 +203,8 @@ private:
 	void CheckMapCollisionRight(CollisionMapInfo& info);
 	void CheckMapCollisionLeft(CollisionMapInfo& info);
 
+	void CollisionInvisibleBlock(CollisionMapInfo& info);
+
 	// 02_07 スライド17枚目
 	Vector3 CornerPosition(const Vector3& center, Corner corner);
 
@@ -209,8 +215,11 @@ private:
 	void UpdateOnWall(const CollisionMapInfo& info);
 
 
-// 02_12 11枚目 デスフラグ
+	// 02_12 11枚目 デスフラグ
 	bool isDead_ = false;
+
+	//playerが見えないブロックにあたった時のフラグ
+	bool isHit_ = false;
 
 	// 02_14 11枚目 振るまい
 	Behavior behavior_ = Behavior::kRoot;
@@ -231,4 +240,5 @@ private:
 	// 02_14 26枚目 余韻動作の時間
 	static inline const uint32_t kRecoveryTime = 12;
 	WorldTransform worldTransformAttack_;
+
 };

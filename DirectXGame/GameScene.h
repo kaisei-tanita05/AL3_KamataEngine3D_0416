@@ -43,6 +43,12 @@ public:
 	// エフェクトを生成
 	void CreateHitEffect(const Vector3& position);
 
+	// 02_10 10枚目 ワールド座標を取得
+	Vector3 GetWorldPosition() const;
+
+	// AABBを取得
+	AABB GetAABB();
+
 private:
 	// 02_12 4枚目 ゲームのフェーズ（型）
 	enum class Phase {
@@ -75,6 +81,11 @@ private:
 	Camera camera_;
 
 	std::vector<std::vector<WorldTransform*>> worldTransformBlocks_;
+
+	std::vector<std::vector<MapChipType>> blockTypes_;
+
+	// kTrap2ブロックの可視状態を記録する2次元配列
+	std::vector<std::vector<bool>> trap2Visibility_;
 
 	DebugCamera* debugCamera_ = nullptr;
 
@@ -124,6 +135,8 @@ private:
 
 	// 02_16
 	Model* particle_model_ = nullptr;
+
+	// キャラクターの当たり判定サイズ
+	static inline const float kWidth = 0.8f;
+	static inline const float kHeight = 0.8f;
 };
-
-

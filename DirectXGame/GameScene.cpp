@@ -156,7 +156,30 @@ void GameScene::Initialize() {
 	HitEffect::SetModel(particle_model_);
 	HitEffect::SetCamera(&camera_);
 
-	//player_->SetDead();
+	// player_->SetDead();
+}
+
+// 02_10 10枚目
+Vector3 GameScene::GetWorldPosition() const {
+
+	Vector3 worldPos;
+	// ワールド行列の平行移動成分を取得（ワールド座標）
+	worldPos.x = worldTransform_.matWorld_.m[3][0];
+	worldPos.y = worldTransform_.matWorld_.m[3][1];
+	worldPos.z = worldTransform_.matWorld_.m[3][2];
+	return worldPos;
+}
+
+
+AABB GameScene::GetAABB() {
+	Vector3 worldPos = GetWorldPosition();
+
+	AABB aabb;
+
+	aabb.min = {worldPos.x - kWidth / 2.0f, worldPos.y - kHeight / 2.0f, worldPos.z - kWidth / 2.0f};
+	aabb.max = {worldPos.x + kWidth / 2.0f, worldPos.y + kHeight / 2.0f, worldPos.z + kWidth / 2.0f};
+
+	return aabb;
 }
 
 void GameScene::ChangePhase() {
@@ -183,32 +206,38 @@ void GameScene::ChangePhase() {
 
 void GameScene::GenerateBlocks() {
 	// 要素数
-	uint32_t numBlockVirtical = mapChipField_->GetNumBlockVirtical();//横の数
-	uint32_t numBlockHorizontal = mapChipField_->GetNumBlockHorizontal();//縦の数
+	uint32_t numBlockVirtical = mapChipField_->GetNumBlockVirtical();     // 横の数
+	uint32_t numBlockHorizontal = mapChipField_->GetNumBlockHorizontal(); // 縦の数
 
 	// 要素数を変更する
 
 	worldTransformBlocks_.resize(numBlockVirtical);
 
+	blockTypes_.resize(numBlockVirtical);
+
+	trap2Visibility_.resize(numBlockVirtical); // ★追加
+
 	// キューブの生成
-	for (uint32_t i = 0; i < numBlockVirtical; ++i) {
-		worldTransformBlocks_[i].resize(numBlockHorizontal);
+	for (uint32_t y = 0; y < numBlockVirtical; ++y) {
+		worldTransformBlocks_[y].resize(numBlockHorizontal);
+		blockTypes_[y].resize(numBlockHorizontal, MapChipType::kBlank);
+		trap2Visibility_[y].resize(numBlockHorizontal, false); // ★全て非表示で初期化
 	}
 	// ブロックの生成
-	for (uint32_t i = 0; i < numBlockVirtical; ++i) {
-		for (uint32_t j = 0; j < numBlockHorizontal; ++j) {
-			if (mapChipField_->GetMapChipTypeByIndex(j, i) == MapChipType::kBlock) {
-				WorldTransform* worldTransform = new WorldTransform();
-				worldTransform->Initialize();
-				worldTransformBlocks_[i][j] = worldTransform;
-				worldTransformBlocks_[i][j]->translation_ = mapChipField_->GetMapChipPositionByIndex(j, i);
+	for (uint32_t y = 0; y < numBlockVirtical; ++y) {
+		for (uint32_t x = 0; x < numBlockHorizontal; ++x) {
+			MapChipType type = mapChipField_->GetMapChipTypeByIndex(x, y);
+			if (type == MapChipType::kBlank) {
+				continue;
 			}
-			if (mapChipField_->GetMapChipTypeByIndex(j, i) == MapChipType::kTrap) {
-				WorldTransform* worldTransform = new WorldTransform();
-				worldTransform->Initialize();
-				worldTransformBlocks_[i][j] = worldTransform;
-				worldTransformBlocks_[i][j]->translation_ = mapChipField_->GetMapChipPositionByIndex(j, i);
-			}
+
+			WorldTransform* worldTransform = new WorldTransform();
+			worldTransform->Initialize();
+			worldTransform->translation_ = mapChipField_->GetMapChipPositionByIndex(x, y);
+
+			worldTransformBlocks_[y][x] = worldTransform;
+
+			blockTypes_[y][x] = type;
 		}
 	}
 }
@@ -360,7 +389,7 @@ void GameScene::Update() {
 
 		// プレイヤーが下に落ちすぎたら死亡扱いにしてフェーズを変更
 		if (player_->GetWorldPosition().y < -6.0f) { // 閾値は環境に応じて調整
-			player_->SetDead();                        // プレイヤーを死亡状態にする関数
+			player_->SetDead();                      // プレイヤーを死亡状態にする関数
 
 			phase_ = Phase::kDeath;
 
@@ -431,7 +460,6 @@ void GameScene::Update() {
 			enemy->UpDate();
 		}
 
-
 		// 02_11 18枚目 デスパーティクルあれば更新
 		if (deathParticles_) {
 			deathParticles_->Update();
@@ -478,11 +506,26 @@ void GameScene::Draw() {
 	skydome_->Draw();
 
 	// ブロックの描画
-	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
-		for (WorldTransform*& worldTransformBlock : worldTransformBlockLine) {
-			if (!worldTransformBlock)
+	for (uint32_t y = 0; y < worldTransformBlocks_.size(); ++y) {
+		for (uint32_t x = 0; x < worldTransformBlocks_[y].size(); ++x) {
+			WorldTransform* worldTransform = worldTransformBlocks_[y][x];
+			if (!worldTransform) {
 				continue;
-			blockModel_->Draw(*worldTransformBlock, camera_);
+			}
+
+			MapChipType type = blockTypes_[y][x];
+
+			switch (type) {
+			case MapChipType::kBlock:
+				blockModel_->Draw(*worldTransform, camera_);
+
+				break;
+			case MapChipType::kTrap2:
+				if (trap2Visibility_[y][x]) { // ★見えるようになったブロックだけ描画
+					blockModel_->Draw(*worldTransform, camera_);
+				}
+				break;
+			}
 		}
 	}
 
@@ -516,7 +559,7 @@ void GameScene::Draw() {
 void GameScene::CheckAllCollisions() {
 
 	// 判定対象1と2の座標
-	AABB aabb1, aabb2;
+	AABB aabb1, aabb2,aabb3;
 
 #pragma region 自キャラと敵キャラの当たり判定
 	{
@@ -542,5 +585,30 @@ void GameScene::CheckAllCollisions() {
 			}
 		}
 	}
+
+#pragma region プレイヤーとkTrap2の衝突判定
+	{
+		aabb1 = player_->GetAABB();
+
+		for (uint32_t y = 0; y < blockTypes_.size(); ++y) {
+			for (uint32_t x = 0; x < blockTypes_[y].size(); ++x) {
+				if (blockTypes_[y][x] != MapChipType::kTrap2)
+					continue;
+
+				WorldTransform* wt = worldTransformBlocks_[y][x];
+				if (!wt)
+					continue;
+
+				aabb3.min = Subtract(wt->translation_,Vector3(0.5f, 0.5f, 0.5f)); // AABBサイズ調整必要なら修正
+				aabb3.max = Add(wt->translation_,Vector3(0.5f, 0.5f, 0.5f));
+
+				if (IsCollision(aabb1, aabb3)) {
+					trap2Visibility_[y][x] = true; // ★プレイヤーが当たったら可視化
+				}
+			}
+		}
+	}
+#pragma endregion
+
 #pragma endregion
 }
