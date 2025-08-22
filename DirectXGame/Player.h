@@ -94,6 +94,7 @@ public:
 	// 02_15 14枚目
 	bool IsAttack() const { return behavior_ == Behavior::kAttack && attackPhase_ == AttackPhase::kAction; }
  
+	void SetDead() { isDead_ = true; }
 
 private:
 	// ワールド変換データ

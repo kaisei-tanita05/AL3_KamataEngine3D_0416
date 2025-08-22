@@ -11,6 +11,8 @@ using namespace KamataEngine;
 enum class MapChipType {
 	kBlank, // 空白
 	kBlock, // ブロック
+	kTrap,//トラップ(足場の当たり判定をなくしたもの)
+	kTrap2,//トラップ(何もない所からブロックの出現)
 };
 
 struct MapChipData {

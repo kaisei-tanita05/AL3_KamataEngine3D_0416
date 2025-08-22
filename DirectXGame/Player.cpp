@@ -345,6 +345,11 @@ void Player::CheckMapCollisionUp(CollisionMapInfo& info) {
 	if (mapChipType == MapChipType::kBlock && mapChipTypeNext != MapChipType::kBlock) {
 		hit = true;
 	}
+
+	if (mapChipType == MapChipType::kTrap2 && mapChipTypeNext != MapChipType::kTrap2) {
+		hit = true;
+	}
+
 	// 右上点の判定
 	indexSet = mapChipField_->GetMapChipIndexSetByPosition(positionsNew[kRightTop]);
 	mapChipType = mapChipField_->GetMapChipTypeByIndex(indexSet.xIndex, indexSet.yIndex);
@@ -352,6 +357,11 @@ void Player::CheckMapCollisionUp(CollisionMapInfo& info) {
 	if (mapChipType == MapChipType::kBlock && mapChipTypeNext != MapChipType::kBlock) {
 		hit = true;
 	}
+
+	if (mapChipType == MapChipType::kTrap2 && mapChipTypeNext != MapChipType::kTrap2) {
+		hit = true;
+	}
+
 	// ブロックにヒット？
 	if (hit) {
 		// めり込みを排除する方向に移動量を設定する
@@ -395,11 +405,19 @@ void Player::CheckMapCollisionDown(CollisionMapInfo& info) {
 	if (mapChipType == MapChipType::kBlock && mapChipTypeNext != MapChipType::kBlock) {
 		hit = true;
 	}
+
+	if (mapChipType == MapChipType::kTrap2 && mapChipTypeNext != MapChipType::kTrap2) {
+		hit = true;
+	}
 	// 右下点の判定
 	indexSet = mapChipField_->GetMapChipIndexSetByPosition(positionsNew[kRightBottom]);
 	mapChipType = mapChipField_->GetMapChipTypeByIndex(indexSet.xIndex, indexSet.yIndex);
 	mapChipTypeNext = mapChipField_->GetMapChipTypeByIndex(indexSet.xIndex, indexSet.yIndex - 1);
 	if (mapChipType == MapChipType::kBlock && mapChipTypeNext != MapChipType::kBlock) {
+		hit = true;
+	}
+
+	if (mapChipType == MapChipType::kTrap2 && mapChipTypeNext != MapChipType::kTrap2) {
 		hit = true;
 	}
 
@@ -448,11 +466,19 @@ void Player::UpdateOnGround(const CollisionMapInfo& info) {
 				hit = true;
 			}
 
+			if (mapChipType == MapChipType::kTrap2) {
+				hit = true;
+			}
+
 			// 右下点の判定
 			indexSet = mapChipField_->GetMapChipIndexSetByPosition(positionsNew[kRightBottom] + Vector3(0.0f, -kGroundSearchHeight, 0.0f));
 			mapChipType = mapChipField_->GetMapChipTypeByIndex(indexSet.xIndex, indexSet.yIndex);
 			if (mapChipType == MapChipType::kBlock) {
 
+				hit = true;
+			}
+
+			if (mapChipType == MapChipType::kTrap2) {
 				hit = true;
 			}
 
@@ -511,11 +537,20 @@ void Player::CheckMapCollisionRight(CollisionMapInfo& info) {
 	if (mapChipType == MapChipType::kBlock && mapChipTypeNext != MapChipType::kBlock) {
 		hit = true;
 	}
+
+	if (mapChipType == MapChipType::kTrap2 && mapChipTypeNext != MapChipType::kTrap2) {
+		hit = true;
+	}
+
 	// 右下点の判定
 	indexSet = mapChipField_->GetMapChipIndexSetByPosition(positionsNew[kRightBottom]);
 	mapChipType = mapChipField_->GetMapChipTypeByIndex(indexSet.xIndex, indexSet.yIndex);
 	mapChipTypeNext = mapChipField_->GetMapChipTypeByIndex(indexSet.xIndex - 1, indexSet.yIndex);
 	if (mapChipType == MapChipType::kBlock && mapChipTypeNext != MapChipType::kBlock) {
+		hit = true;
+	}
+
+	if (mapChipType == MapChipType::kTrap2 && mapChipTypeNext != MapChipType::kTrap2) {
 		hit = true;
 	}
 
@@ -562,11 +597,19 @@ void Player::CheckMapCollisionLeft(CollisionMapInfo& info) {
 	if (mapChipType == MapChipType::kBlock && mapChipTypeNext != MapChipType::kBlock) {
 		hit = true;
 	}
+
+	if (mapChipType == MapChipType::kTrap2 && mapChipTypeNext != MapChipType::kTrap2) {
+		hit = true;
+	}
 	// 左下点の判定
 	indexSet = mapChipField_->GetMapChipIndexSetByPosition(positionsNew[kLeftBottom]);
 	mapChipType = mapChipField_->GetMapChipTypeByIndex(indexSet.xIndex, indexSet.yIndex);
 	mapChipTypeNext = mapChipField_->GetMapChipTypeByIndex(indexSet.xIndex + 1, indexSet.yIndex);
 	if (mapChipType == MapChipType::kBlock && mapChipTypeNext != MapChipType::kBlock) {
+		hit = true;
+	}
+
+	if (mapChipType == MapChipType::kTrap2 && mapChipTypeNext != MapChipType::kTrap2) {
 		hit = true;
 	}
 

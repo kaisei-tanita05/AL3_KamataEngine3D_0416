@@ -155,6 +155,8 @@ void GameScene::Initialize() {
 
 	HitEffect::SetModel(particle_model_);
 	HitEffect::SetCamera(&camera_);
+
+	//player_->SetDead();
 }
 
 void GameScene::ChangePhase() {
@@ -181,8 +183,8 @@ void GameScene::ChangePhase() {
 
 void GameScene::GenerateBlocks() {
 	// 要素数
-	uint32_t numBlockVirtical = mapChipField_->GetNumBlockVirtical();
-	uint32_t numBlockHorizontal = mapChipField_->GetNumBlockHorizontal();
+	uint32_t numBlockVirtical = mapChipField_->GetNumBlockVirtical();//横の数
+	uint32_t numBlockHorizontal = mapChipField_->GetNumBlockHorizontal();//縦の数
 
 	// 要素数を変更する
 
@@ -196,6 +198,12 @@ void GameScene::GenerateBlocks() {
 	for (uint32_t i = 0; i < numBlockVirtical; ++i) {
 		for (uint32_t j = 0; j < numBlockHorizontal; ++j) {
 			if (mapChipField_->GetMapChipTypeByIndex(j, i) == MapChipType::kBlock) {
+				WorldTransform* worldTransform = new WorldTransform();
+				worldTransform->Initialize();
+				worldTransformBlocks_[i][j] = worldTransform;
+				worldTransformBlocks_[i][j]->translation_ = mapChipField_->GetMapChipPositionByIndex(j, i);
+			}
+			if (mapChipField_->GetMapChipTypeByIndex(j, i) == MapChipType::kTrap) {
 				WorldTransform* worldTransform = new WorldTransform();
 				worldTransform->Initialize();
 				worldTransformBlocks_[i][j] = worldTransform;
@@ -349,6 +357,18 @@ void GameScene::Update() {
 
 		//  自キャラの更新
 		player_->UpDate();
+
+		// プレイヤーが下に落ちすぎたら死亡扱いにしてフェーズを変更
+		if (player_->GetWorldPosition().y < -6.0f) { // 閾値は環境に応じて調整
+			player_->SetDead();                        // プレイヤーを死亡状態にする関数
+
+			phase_ = Phase::kDeath;
+
+			const Vector3& deathParticlesPosition = player_->GetWorldPosition();
+
+			deathParticles_ = new DeathParticles;
+			deathParticles_->Initialize(deathParticle_model_, &camera_, deathParticlesPosition);
+		}
 
 		for (Enemy* enemy : enemies_) {
 			enemy->UpDate();

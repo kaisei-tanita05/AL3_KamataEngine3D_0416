@@ -119,6 +119,7 @@
     <ClCompile Include="Skydome.cpp" />
     <ClCompile Include="TitleScene.cpp" />
     <ClCompile Include="UpData.cpp" />
+    <ClCompile Include="VisibleBlock.cpp" />
     <ClCompile Include="worldMatrix.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -211,6 +212,7 @@
     <ClInclude Include="UpData.h" />
     <ClInclude Include="Vector3.h" />
     <ClInclude Include="Vector4.h" />
+    <ClInclude Include="VisibleBlock.h" />
     <ClInclude Include="worldMatrix.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
