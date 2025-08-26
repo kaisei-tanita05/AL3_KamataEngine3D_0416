@@ -13,17 +13,15 @@
 using namespace KamataEngine;
 
 //ゲームシーン
-class GameScene 
-{
+class GameScene {
 public:
-
-	//初期化
+	// 初期化
 	void Initialize();
 
-	//更新
+	// 更新
 	void Update();
 
-	//描画
+	// 描画
 	void Draw();
 
 	~GameScene();
@@ -39,7 +37,6 @@ public:
 	// 02_12 26枚目	デスフラグのgetter
 	bool IsFinished() const { return finished_; }
 
-
 	// エフェクトを生成
 	void CreateHitEffect(const Vector3& position);
 
@@ -49,6 +46,8 @@ public:
 	// AABBを取得
 	AABB GetAABB();
 
+	Player* GetPlayer() const { return player_; } // プレイヤー取得関数を追加
+
 private:
 	// 02_12 4枚目 ゲームのフェーズ（型）
 	enum class Phase {
@@ -56,12 +55,11 @@ private:
 		kPlay,    // ゲームプレイ
 		kDeath,   // デス演出
 		kFadeOut, // フェードアウト 02_13 28枚目で追加
+		kClear,   // クリア
 	};
 
 	// 02_12 4枚目 ゲームの現在フェーズ（変数）
 	Phase phase_;
-
-	
 
 	////テクスチャーハンドル
 	uint32_t textureHandle_ = 0;
@@ -71,11 +69,12 @@ private:
 	//////3Dモデル
 	Model* model_ = nullptr;
 
-	//ブロックの3Dモデル
+	// ブロックの3Dモデル
 	Model* blockModel_ = nullptr;
 
+	Model* goalModel_ = nullptr;
+
 	WorldTransform worldTransform_;
-	
 
 	////カメラ
 	Camera camera_;
@@ -95,21 +94,22 @@ private:
 	// 02_09 10枚目 エネミークラス
 	Enemy* enemy_ = nullptr;
 
+	// Math* math_ = nullptr;
 
-	//Math* math_ = nullptr;
-
-	//デバッグカメラ有効
+	// デバッグカメラ有効
 	bool isDebugCameraActive_ = false;
 
 	Skydome* skydome_ = nullptr;
 
-	Model*modelSkydome_ = nullptr;
+	Model* modelSkydome_ = nullptr;
 
 	Model* modelPlayer_ = nullptr;
 
 	Model* modelAttack_ = nullptr;
 
 	Model* enemy_model_ = nullptr;
+
+	Model* modelGoal_ = nullptr;
 
 	MapChipField* mapChipField_;
 

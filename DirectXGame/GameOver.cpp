@@ -1,28 +1,29 @@
+#include "GameOver.h"
 #include <numbers>
-#include "TitleScene.h"
 #include "Math.h"
 
-TitleScene::~TitleScene() {
+GameOver::~GameOver() 
+{
+
 	delete modelPlayer_;
-	delete modelTitle_;
+	//delete modelTitle_;
 	delete fade_;
 }
 
-void TitleScene::Initialize() {
 
-	modelTitle_ = Model::CreateFromOBJ("titleFont", true);
+void GameOver::Initialize() 
+{
+
 	modelPlayer_ = Model::CreateFromOBJ("player2");
-
-
 
 	// カメラ初期化
 	camera_.Initialize();
 
-	const float kPlayerTitle = 2.0f;
+	//const float kPlayerTitle = 2.0f;
 
-	worldTransformTitle_.Initialize();
+	//worldTransformTitle_.Initialize();
 
-	worldTransformTitle_.scale_ = {kPlayerTitle, kPlayerTitle, kPlayerTitle};
+	//worldTransformTitle_.scale_ = {kPlayerTitle, kPlayerTitle, kPlayerTitle};
 
 	const float kPlayerScale = 10.0f;
 
@@ -39,11 +40,12 @@ void TitleScene::Initialize() {
 	fade_ = new Fade();
 	fade_->Initialize();
 
-		// 02_13 22枚目
+	// 02_13 22枚目
 	fade_->Start(Fade::Status::FadeIn, 5.0f);
 }
 
-void TitleScene::Update() {
+void GameOver::Update() 
+{
 
 	// 02_13 27枚目
 	switch (phase_) {
@@ -67,28 +69,25 @@ void TitleScene::Update() {
 		}
 		break;
 	}
-	// 02_12 27枚目
-	/*if (Input::GetInstance()->PushKey(DIK_SPACE)) {
-		finished_ = true;
-	}*/
 
 	counter_ += 1.0f / 60.0f;
-	counter_ = std::fmod(counter_, kTimeTitleMove);
+	//counter_ = std::fmod(counter_, kTimeTitleMove);
 
-	float angle = counter_ / kTimeTitleMove * 2.0f * std::numbers::pi_v<float>;
+	//float angle = counter_ / kTimeTitleMove * 2.0f * std::numbers::pi_v<float>;
 
-	worldTransformTitle_.translation_.y = std::sin(angle) + 10.0f;
+	//worldTransformTitle_.translation_.y = std::sin(angle) + 10.0f;
 
 	camera_.TransferMatrix();
 
-	upData->WorldTransformUpData(worldTransformTitle_);
+	//upData->WorldTransformUpData(worldTransformTitle_);
 
 	// アフィン変換～DirectXに転送(タイトル座標)
 	upData->WorldTransformUpData(worldTransformPlayer_);
 
 }
 
-void TitleScene::Draw() {
+void GameOver::Draw() 
+{
 
 	DirectXCommon* dxCommon_ = DirectXCommon::GetInstance();
 	// コマンドリストの取得
@@ -96,10 +95,11 @@ void TitleScene::Draw() {
 
 	Model::PreDraw(commandList);
 
-	modelTitle_->Draw(worldTransformTitle_, camera_);
+	//modelTitle_->Draw(worldTransformTitle_, camera_);
 	modelPlayer_->Draw(worldTransformPlayer_, camera_);
 	Model::PostDraw();
 
-	//02_13 13枚目
+	// 02_13 13枚目
 	fade_->Draw();
+
 }

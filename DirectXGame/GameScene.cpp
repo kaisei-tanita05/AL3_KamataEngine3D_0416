@@ -61,7 +61,11 @@ void GameScene::Initialize() {
 	// カメラの初期化
 	camera_.Initialize();
 
-	blockModel_ = Model::CreateFromOBJ("block");
+	//ゲーム内の地面ブロック
+	blockModel_ = Model::CreateFromOBJ("block2");
+
+	//Goalのモデル
+	goalModel_ = Model::CreateFromOBJ("goal");
 
 	debugCamera_ = new DebugCamera(WinApp::kWindowWidth, WinApp::kWindowHeight);
 
@@ -84,7 +88,7 @@ void GameScene::Initialize() {
 	// 自キャラの生成
 	player_ = new Player();
 
-	modelPlayer_ = Model::CreateFromOBJ("player", true);
+	modelPlayer_ = Model::CreateFromOBJ("player2", true);
 
 	modelAttack_ = Model::CreateFromOBJ("attack_effect", true);
 
@@ -123,7 +127,7 @@ void GameScene::Initialize() {
 	for (int32_t i = 0; i < 3; ++i) {
 		Enemy* newEnemy = new Enemy();
 
-		Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(14 + i * 3, 18);
+		Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(30 + i * 6, 18);
 
 		newEnemy->Initialize(enemy_model_, &camera_, enemyPosition);
 		newEnemy->SetGameScene(this);
@@ -399,6 +403,14 @@ void GameScene::Update() {
 			deathParticles_->Initialize(deathParticle_model_, &camera_, deathParticlesPosition);
 		}
 
+		if (player_->IsGoal()) {
+			player_->SetGoal();
+
+			phase_ = Phase::kDeath;
+
+			//const Vector3& deathParticlesPosition = player_->GetWorldPosition();
+		}
+
 		for (Enemy* enemy : enemies_) {
 			enemy->UpDate();
 		}
@@ -520,10 +532,19 @@ void GameScene::Draw() {
 				blockModel_->Draw(*worldTransform, camera_);
 
 				break;
+
+			case MapChipType::kTrap:
+				blockModel_->Draw(*worldTransform, camera_);
+				break;
+
 			case MapChipType::kTrap2:
 				if (trap2Visibility_[y][x]) { // ★見えるようになったブロックだけ描画
 					blockModel_->Draw(*worldTransform, camera_);
 				}
+				break;
+
+			case MapChipType::kGoal:
+				goalModel_->Draw(*worldTransform, camera_);
 				break;
 			}
 		}
@@ -559,7 +580,7 @@ void GameScene::Draw() {
 void GameScene::CheckAllCollisions() {
 
 	// 判定対象1と2の座標
-	AABB aabb1, aabb2,aabb3;
+	AABB aabb1, aabb2, aabb3;
 
 #pragma region 自キャラと敵キャラの当たり判定
 	{
@@ -608,7 +629,7 @@ void GameScene::CheckAllCollisions() {
 			}
 		}
 	}
-#pragma endregion
+#pragma endregion 
 
 #pragma endregion
 }

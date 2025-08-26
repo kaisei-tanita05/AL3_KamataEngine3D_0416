@@ -13,6 +13,7 @@ std::map<std::string, MapChipType> mapChipTable = {
     {"1", MapChipType::kBlock},
     {"2", MapChipType::kTrap },
     {"3", MapChipType::kTrap2},
+    {"4",MapChipType::kGoal},
 };
 }
 

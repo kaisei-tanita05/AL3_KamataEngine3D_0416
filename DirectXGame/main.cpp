@@ -1,18 +1,26 @@
 #include "GameScene.h"
+#include "Player.h"
 #include "KamataEngine.h"
 #include "TitleScene.h"
+#include "GameOver.h"
+#include "GameClear.h"
 #include <Windows.h>
 
 using namespace KamataEngine;
 
 TitleScene* titleScene = nullptr;
 GameScene* gameScene = nullptr;
+GameOver* gameOverScene = nullptr;
+GameClear* gameClearScene = nullptr;
+//Player* player_ = new Player();
 
 // 02_12 25枚目(Scene sceneまで)
 enum class Scene {
 	kUnknown = 0,
 	kTitle,
 	kGame,
+	kGameOver,
+	kGameClear,
 };
 
 // 現在シーン（型）
@@ -36,10 +44,40 @@ void ChangeScene() {
 	case Scene::kGame:
 		// 02_12 30枚目
 		if (gameScene->IsFinished()) {
+			Player* player_ = gameScene->GetPlayer();
 			// シーン変更
+			if (player_->IsDead()) {
+				scene = Scene::kGameOver;
+				delete gameScene;
+				gameScene = nullptr;
+				gameOverScene = new GameOver;
+				gameOverScene->Initialize();
+			}else if (player_->IsGoal()) {
+				scene = Scene::kGameClear;
+				delete gameScene;
+				gameScene = nullptr;
+				gameClearScene = new GameClear;
+				gameClearScene->Initialize();
+			}
+		}
+		break;
+
+	case Scene::kGameOver:
+		if (gameOverScene->IsFinished()) {
 			scene = Scene::kTitle;
-			delete gameScene;
-			gameScene = nullptr;
+			delete gameOverScene;
+			gameOverScene = nullptr;
+			titleScene = new TitleScene;
+			titleScene->Initialize();
+		}
+
+		break;
+
+	case Scene::kGameClear:
+		if (gameClearScene->IsFinished()) {
+			scene = Scene::kTitle;
+			delete gameClearScene;
+			gameClearScene = nullptr;
 			titleScene = new TitleScene;
 			titleScene->Initialize();
 		}
@@ -57,6 +95,12 @@ void UpDataScene() {
 	case Scene::kGame:
 		gameScene->Update();
 		break;
+	case Scene::kGameOver:
+		gameOverScene->Update();
+		break;
+	case Scene::kGameClear:
+		gameClearScene->Update();
+		break;
 	}
 }
 
@@ -68,6 +112,12 @@ void DrawScene() {
 		break;
 	case Scene::kGame:
 		gameScene->Draw();
+		break;
+	case Scene::kGameOver:
+		gameOverScene->Draw();
+		break;
+	case Scene::kGameClear:
+		gameClearScene->Draw();
 		break;
 	}
 }
@@ -114,6 +164,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	// 02_12 35枚目 各種解放
 	delete titleScene;
 	delete gameScene;
+	delete gameOverScene;
+	delete gameClearScene;
 
 	// nullptrの代入
 	gameScene = nullptr;

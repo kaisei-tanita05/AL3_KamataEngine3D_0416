@@ -1,11 +1,10 @@
 #pragma once
+#include "HitEffect.h"
 #include "KamataEngine.h"
 #include "MapChipField.h"
 #include "Math.h"
-#include "UpData.h"
 #include "Player.h"
-#include "HitEffect.h"
-
+#include "UpData.h"
 
 using namespace KamataEngine;
 
@@ -59,6 +58,12 @@ public:
 	// 02_16 19
 	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
 
+	// 位置を設定するメソッドを追加
+	void SetPosition(const Vector3& position) { position_ = position; }
+
+	// 位置を取得するメソッドを追加
+	const Vector3& GetPosition() const { return position_; }
+
 private:
 	// ワールド変換データ
 	WorldTransform worldTransform_;
@@ -94,6 +99,9 @@ private:
 	// 02_10 14枚目 当たり判定サイズ
 	static inline const float kWidth = 0.8f;
 	static inline const float kHeight = 0.8f;
+
+	
+	Vector3 position_; // 敵の位置を保持するメンバ変数
 
 	bool isDead_ = false;
 

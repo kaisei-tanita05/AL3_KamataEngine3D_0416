@@ -13,6 +13,7 @@ enum class MapChipType {
 	kBlock, // ブロック
 	kTrap,//トラップ(足場の当たり判定をなくしたもの)
 	kTrap2,//トラップ(何もない所からブロックの出現)
+	kGoal,
 };
 
 struct MapChipData {

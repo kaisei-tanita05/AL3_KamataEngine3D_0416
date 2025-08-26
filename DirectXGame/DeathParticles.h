@@ -9,6 +9,11 @@
 
 using namespace KamataEngine;
 
+struct ParticleData {
+	float angle;  // 現在の回転角（ラジアン）
+	float radius; // 現在の半径（中心からの距離）
+};
+
 /// <summary>
 /// デス演出用パーティクル
 /// </summary>
@@ -29,6 +34,8 @@ private:
 
 	// 02_11_10枚目パーティクル座標配列
 	std::array<WorldTransform, kNumParticles> worldTransforms_;
+
+	std::array<ParticleData, kNumParticles> particles_;
 
 	// 02_11_13枚目 モデル
 	Model* model_ = nullptr;
@@ -61,4 +68,6 @@ private:
 
 	// ワールド変換データ
 	WorldTransform worldTransform_;
+
+	Vector3 center_;
 };

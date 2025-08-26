@@ -6,10 +6,12 @@ void DeathParticles::Initialize(Model* model, Camera* camera, const Vector3& pos
 	model_ = model;
 	camera_ = camera;
 
-	// 02_11_11枚目 ワールド変換の初期化
-	for (auto& worldTransform : worldTransforms_) {
-		worldTransform.Initialize();
-		worldTransform.translation_ = position;
+	 for (uint32_t i = 0; i < kNumParticles; ++i) {
+		worldTransforms_[i].Initialize();
+		worldTransforms_[i].translation_ = position;
+
+		particles_[i].angle = kAngleUnit_ * i; // 各パーティクルに固有の角度を設定
+		particles_[i].radius = 0.0f;           // 半径は最初は0
 	}
 
 	// 02_11_31枚目
@@ -17,6 +19,11 @@ void DeathParticles::Initialize(Model* model, Camera* camera, const Vector3& pos
 
 	// 02_11_31枚目
 	color_ = {1, 1, 1, 1};
+
+	counter_ = 0.0f;
+	isFinished_ = false;
+
+	center_ = position; // 死亡位置を保存
 }
 
 void DeathParticles::Update() {
@@ -36,24 +43,23 @@ void DeathParticles::Update() {
 		isFinished_ = true;
 	}
 
-	// 02_11_23枚目
-	for (uint32_t i = 0; i < kNumParticles; ++i) {
-		// 基本となる速度ベクトル
-		Vector3 velocity = {kSpeed_, 0, 0};
+	 for (uint32_t i = 0; i < kNumParticles; ++i) {
+		// 角度を回転させる（毎フレーム少しずつ）
+		particles_[i].angle += 0.2f; // 回転速度（調整可）
 
-		// 回転角を計算する
-		float angle = kAngleUnit_ * i;
+		// 半径を増やす（外に広がる）
+		particles_[i].radius += kSpeed_; // kSpeed_ を広がる速度として再利用
 
-		// Z軸まわり回転行列
-		Matrix4x4 matrixRotation = MakeRotateZMatrix(angle);
+		// 角度と半径から新しい座標を計算（Z=0の平面）
+		float x = particles_[i].radius * std::cos(particles_[i].angle);
+		float y = particles_[i].radius * std::sin(particles_[i].angle);
 
-		// 基本ベクトルを回転させて速度ベクトルを得る
-		// オリジナル数学関数ファイルにTransform関数追加
-		velocity = Transform(velocity, matrixRotation);
-
-		// 移動処理
-		worldTransforms_[i].translation_ += velocity;
+		// プレイヤー死亡地点を中心にする
+		worldTransforms_[i].translation_.x = center_.x + x;
+		worldTransforms_[i].translation_.y = center_.y + y;
+		worldTransforms_[i].translation_.z = center_.z; // Z方向には動かさない（必要なら加える）
 	}
+
 
 	// 02_11_32枚目
 	color_.w = std::clamp(1.0f - counter_ / kDuration_, 0.0f, 1.0f);
