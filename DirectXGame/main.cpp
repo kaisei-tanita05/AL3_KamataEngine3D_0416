@@ -12,7 +12,6 @@ TitleScene* titleScene = nullptr;
 GameScene* gameScene = nullptr;
 GameOver* gameOverScene = nullptr;
 GameClear* gameClearScene = nullptr;
-//Player* player_ = new Player();
 
 // 02_12 25枚目(Scene sceneまで)
 enum class Scene {

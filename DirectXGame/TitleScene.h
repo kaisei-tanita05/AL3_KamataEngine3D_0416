@@ -2,6 +2,8 @@
 #include "Fade.h"
 #include "KamataEngine.h"
 #include "UpData.h"
+#include "Enemy.h"
+#include "Player.h"
 
 using namespace KamataEngine;
 
@@ -49,4 +51,7 @@ private:
 
 	UpData* upData = nullptr;
 
+	Player player_;
+	Enemy enemy_;
+	Model* modelEnemy_ = nullptr;
 };

@@ -31,7 +31,8 @@ public:
 
 private:
 
-	static inline const float kTimeTitleMove = 2.0f;
+	static inline const float kTimeClearMove = 2.0f;
+	
 
 	// ビュープロジェクション
 	Camera camera_;
@@ -44,6 +45,8 @@ private:
 
 	Model* modelTitle_ = nullptr;
 	//Model* modelPlayer_ = nullptr;
+
+	Model* modelClear_ = nullptr;
 
 	float counter_ = 0.0f;
 	// 02_12 26枚目

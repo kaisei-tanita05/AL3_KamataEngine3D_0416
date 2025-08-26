@@ -13,8 +13,6 @@ void TitleScene::Initialize() {
 	modelTitle_ = Model::CreateFromOBJ("titleFont", true);
 	modelPlayer_ = Model::CreateFromOBJ("player2");
 
-
-
 	// カメラ初期化
 	camera_.Initialize();
 
@@ -55,6 +53,7 @@ void TitleScene::Update() {
 		}
 		break;
 	case Phase::kMain:
+
 		if (Input::GetInstance()->PushKey(DIK_SPACE)) {
 			fade_->Start(Fade::Status::FadeOut, 1.0f);
 			phase_ = Phase::kFadeOut;
@@ -78,6 +77,9 @@ void TitleScene::Update() {
 	float angle = counter_ / kTimeTitleMove * 2.0f * std::numbers::pi_v<float>;
 
 	worldTransformTitle_.translation_.y = std::sin(angle) + 10.0f;
+
+	// プレイヤーをその場でY軸回転させる
+	worldTransformPlayer_.rotation_.y += 0.02f;
 
 	camera_.TransferMatrix();
 

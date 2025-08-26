@@ -10,16 +10,18 @@ GameClear::~GameClear()
 
 void GameClear::Initialize() 
 { 
-	modelTitle_ = Model::CreateFromOBJ("titleFont", true);
+	//modelTitle_ = Model::CreateFromOBJ("titleFont", true);
+	modelClear_ = Model::CreateFromOBJ("ClearFont", true);
 
 	// カメラ初期化
 	camera_.Initialize();
 
-	const float kPlayerTitle = 2.0f;
+	worldTransformGameClear_.Initialize();
 
-	worldTransformTitle_.Initialize();
+	const float kPlayerClear = 2.0f;
 
-	worldTransformTitle_.scale_ = {kPlayerTitle, kPlayerTitle, kPlayerTitle};
+	worldTransformGameClear_.scale_ = {kPlayerClear, kPlayerClear, kPlayerClear};
+
 
 	fade_ = new Fade();
 	fade_->Initialize();
@@ -56,15 +58,33 @@ void GameClear::Update()
 
 
 	counter_ += 1.0f / 60.0f;
-	counter_ = std::fmod(counter_, kTimeTitleMove);
+	counter_ = std::fmod(counter_, kTimeClearMove);
 
-	float angle = counter_ / kTimeTitleMove * 2.0f * std::numbers::pi_v<float>;
+	float angle = counter_ / kTimeClearMove * 2.0f * std::numbers::pi_v<float>;
 
-	worldTransformTitle_.translation_.y = std::sin(angle) + 10.0f;
+	//worldTransformTitle_.translation_.y = std::sin(angle) + 10.0f;
+
+	worldTransformGameClear_.translation_.y = std::sin(angle) + 10.0f;
+
+
+	// ==== 追加：タイトル拡縮演出 ====
+
+	// スケール値をsin波で上下させる
+	const float kBaseScale = 2.0f;      // 基本スケール
+	const float kScaleAmplitude = 0.3f; // 拡縮の幅（±値）
+	const float kScaleSpeed = 2.0f;     // 速度
+
+	float scaleAnim = std::sin(counter_ * kScaleSpeed * std::numbers::pi_v<float>);
+	float scaleValue = kBaseScale + scaleAnim * kScaleAmplitude;
+
+	//worldTransformTitle_.scale_ = {scaleValue, scaleValue, scaleValue};
+
+	worldTransformGameClear_.scale_ = {scaleValue, scaleValue, scaleValue};
 
 	camera_.TransferMatrix();
 
-	upData->WorldTransformUpData(worldTransformTitle_);
+	//upData->WorldTransformUpData(worldTransformTitle_);
+	upData->WorldTransformUpData(worldTransformGameClear_);
 }
 
 void GameClear::Draw() 
@@ -76,7 +96,8 @@ void GameClear::Draw()
 
 	Model::PreDraw(commandList);
 
-	modelTitle_->Draw(worldTransformTitle_, camera_);
+	//modelTitle_->Draw(worldTransformTitle_, camera_);
+	modelClear_->Draw(worldTransformGameClear_, camera_);
 	Model::PostDraw();
 
 	// 02_13 13枚目

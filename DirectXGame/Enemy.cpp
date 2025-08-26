@@ -22,8 +22,8 @@ void Enemy::Initialize(Model* model, Camera* camera, const Vector3& position) {
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = position;
 	// 02_09 7枚目 角度調整
-	worldTransform_.rotation_.y = std::numbers::pi_v<float> * 3.0f / 2.0f;
-
+	worldTransform_.rotation_.y = std::numbers::pi_v<float> * 0.5f;
+	
 	// 02_09 16枚目
 	velocity_ = {-kWalkSpeed, 0, 0};
 	// 02_09 20枚目
