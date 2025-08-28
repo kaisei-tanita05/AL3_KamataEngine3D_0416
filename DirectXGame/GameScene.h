@@ -1,18 +1,18 @@
 #pragma once
-#include <KamataEngine.h>
+#include "CameraController.h"
+#include "DeathParticles.h"
+#include "Enemy.h"
+#include "Fade.h"
+#include "HitEffect.h"
+#include "MapChipField.h"
 #include "Player.h"
 #include "Skydome.h"
-#include "MapChipField.h"
-#include "CameraController.h"
-#include "Enemy.h"
-#include "DeathParticles.h"
-#include "Fade.h"
 #include "UpData.h"
-#include "HitEffect.h"
+#include <KamataEngine.h>
 
 using namespace KamataEngine;
 
-//ゲームシーン
+// ゲームシーン
 class GameScene {
 public:
 	// 初期化
@@ -47,6 +47,9 @@ public:
 	AABB GetAABB();
 
 	Player* GetPlayer() const { return player_; } // プレイヤー取得関数を追加
+
+	bool IsPauseActive() const { return pauseMenuActive_; }
+	int GetPauseSelection() const { return pauseSelection_; }
 
 private:
 	// 02_12 4枚目 ゲームのフェーズ（型）
@@ -111,6 +114,10 @@ private:
 
 	Model* modelGoal_ = nullptr;
 
+	Model* modelArrow_ = nullptr;
+
+	WorldTransform worldTransformArrow_;
+
 	MapChipField* mapChipField_;
 
 	CameraController* CController_ = nullptr;
@@ -139,4 +146,45 @@ private:
 	// キャラクターの当たり判定サイズ
 	static inline const float kWidth = 0.8f;
 	static inline const float kHeight = 0.8f;
+
+	// ポーズメニュー作成
+	// ポーズメニュー作成
+	bool pauseMenuActive_ = false;
+
+	// メニュー選択
+	int pauseSelection_ = 0;
+
+	Sprite* pauseMenuBackGround_ = nullptr;
+
+	Sprite* pauseMenu_ = nullptr;
+
+	Sprite* pauseMenuRetryButton1_ = nullptr;
+
+	Sprite* pauseMenuRetryButton2_ = nullptr;
+
+	Sprite* pauseMenuTitleButton1_ = nullptr;
+
+	Sprite* pauseMenuTitleButton2_ = nullptr;
+
+	Sprite* pauseMenuBackGame_ = nullptr;
+
+	Sprite* pauseMenuBackGame2_ = nullptr;
+
+	Sprite* chooseTexture_ = nullptr;
+
+	// テクスチャハンドル
+	int32_t pauseMenuBackgroundHandle_ = 0;
+
+	int32_t pauseMenuHandle_ = 0;
+
+	int32_t pauseMenuRestartButton1Handle_ = 0;
+	int32_t pauseMenuRestartButton2Handle_ = 0;
+
+	int32_t pauseMenuTitleButton1Handle_ = 0;
+	int32_t pauseMenuTitleButton2Handle_ = 0;
+
+	int32_t pauseMenuBackGameHandle_ = 0;
+	int32_t pauseMenuBackGame2Handle_ = 0;
+
+	int32_t chooseTextureHandle_ = 0;
 };

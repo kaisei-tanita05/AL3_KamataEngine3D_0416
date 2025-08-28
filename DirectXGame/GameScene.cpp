@@ -45,6 +45,24 @@ GameScene::~GameScene() {
 	for (HitEffect* hitEffect : hitEffects_) {
 		delete hitEffect;
 	}
+
+	delete pauseMenuBackGround_;
+
+	delete pauseMenu_;
+
+	delete pauseMenuRetryButton1_;
+
+	delete pauseMenuRetryButton2_;
+
+	delete pauseMenuTitleButton1_;
+
+	delete pauseMenuTitleButton2_;
+
+	delete pauseMenuBackGame_;
+
+	delete pauseMenuBackGame2_;
+
+	delete chooseTexture_;
 }
 
 void GameScene::Initialize() {
@@ -160,7 +178,51 @@ void GameScene::Initialize() {
 	HitEffect::SetModel(particle_model_);
 	HitEffect::SetCamera(&camera_);
 
-	// player_->SetDead();
+#pragma region  ポーズメニュー
+	//ポーズメニュー
+	pauseMenuBackgroundHandle_ = TextureManager::Load("Texture/backGround.png");
+
+	pauseMenuRestartButton1Handle_ = TextureManager::Load("Texture/Retry.png");
+	pauseMenuRestartButton2Handle_ = TextureManager::Load("Texture/Retry2.png");
+
+	pauseMenuTitleButton1Handle_ = TextureManager::Load("Texture/backTitle.png");
+	pauseMenuTitleButton2Handle_ = TextureManager::Load("Texture/backTitle2.png");
+
+	pauseMenuHandle_ = TextureManager::Load("Texture/pause_Menu.png");
+
+	pauseMenuBackGameHandle_ = TextureManager::Load("Texture/backGame.png");
+	pauseMenuBackGame2Handle_ = TextureManager::Load("Texture/backGame2.png");
+
+	chooseTextureHandle_ = TextureManager::Load("Texture/choose.png");
+
+	// スプライトの生成
+	pauseMenuBackGround_ = Sprite::Create(pauseMenuBackgroundHandle_, {0, 0});
+
+	pauseMenuRetryButton1_ = Sprite::Create(pauseMenuRestartButton1Handle_, {420, 250});
+	pauseMenuRetryButton1_->SetSize({373, 208});
+
+	pauseMenuRetryButton2_ = Sprite::Create(pauseMenuRestartButton2Handle_, {420, 250});
+	pauseMenuRetryButton2_->SetSize({373, 208});
+
+	pauseMenuTitleButton1_ = Sprite::Create(pauseMenuTitleButton1Handle_, {420, 350});
+	pauseMenuTitleButton1_->SetSize({373, 208});
+
+	pauseMenuTitleButton2_ = Sprite::Create(pauseMenuTitleButton2Handle_, {420, 350});
+	pauseMenuTitleButton2_->SetSize({373, 208});
+
+	pauseMenu_ = Sprite::Create(pauseMenuHandle_, {320, -15});
+	pauseMenu_->SetSize({666, 208});
+
+	pauseMenuBackGame_ = Sprite::Create(pauseMenuBackGameHandle_, {420, 450});
+	pauseMenuBackGame_->SetSize({373, 208});
+
+	pauseMenuBackGame2_ = Sprite::Create(pauseMenuBackGame2Handle_, {420, 450});
+	pauseMenuBackGame2_->SetSize({373, 208});
+
+	chooseTexture_ = Sprite::Create(chooseTextureHandle_, {200, 300});
+	chooseTexture_->SetSize({373, 208});
+
+#pragma endregion
 }
 
 // 02_10 10枚目
@@ -502,6 +564,41 @@ void GameScene::Update() {
 
 		break;
 	}
+
+	// =========================
+	// ポーズ処理
+	// =========================
+	if (Input::GetInstance()->TriggerKey(DIK_ESCAPE)) {
+		pauseMenuActive_ = !pauseMenuActive_;
+	}
+
+	if (pauseMenuActive_) {
+		// 上下キーで選択移動
+		if (Input::GetInstance()->TriggerKey(DIK_UP)) {
+			pauseSelection_ = (pauseSelection_ + 2) % 3; // 0←→2循環
+		}
+		if (Input::GetInstance()->TriggerKey(DIK_DOWN)) {
+			pauseSelection_ = (pauseSelection_ + 1) % 3;
+		}
+
+		// Enterキーで決定
+		if (Input::GetInstance()->TriggerKey(DIK_RETURN)) {
+			switch (pauseSelection_) {
+			case 0:               // リトライ
+				finished_ = true; // Scene側で再生成される
+				break;
+			case 1: // タイトル
+				finished_ = true;
+				player_->SetDead(); // 死んだ扱いにしてGameOverへ飛ばさないように
+				break;
+			case 2: // 続行
+				pauseMenuActive_ = false;
+				break;
+			}
+		}
+		return; // ポーズ中はゲーム更新しない
+	}
+
 }
 
 void GameScene::Draw() {
@@ -556,8 +653,10 @@ void GameScene::Draw() {
 	}
 
 	// 02_11 18枚目 デスパーティクルあれば描画
-	if (deathParticles_) {
-		deathParticles_->Draw();
+	if (player_->IsDead()) {
+		if (deathParticles_) {
+			deathParticles_->Draw();
+		}
 	}
 
 	for (HitEffect* hitEffect : hitEffects_) {
@@ -568,6 +667,42 @@ void GameScene::Draw() {
 
 	// スプライト描画前処理
 	Sprite::PreDraw(dxCommon->GetCommandList());
+
+	 // =========================
+	// ポーズメニュー描画
+	// =========================
+	if (pauseMenuActive_) {
+		//ポーズメニュー
+		pauseMenuBackGround_->Draw();
+
+		pauseMenu_->Draw();
+
+		//
+		switch (pauseSelection_) { 
+			
+			break;
+
+		case 0://リトライ
+			pauseMenuRetryButton2_->Draw();
+			pauseMenuTitleButton1_->Draw();
+			pauseMenuBackGame_->Draw();
+			chooseTexture_->Draw();
+			break;
+		case 1://タイトル
+			pauseMenuRetryButton1_->Draw();
+			pauseMenuTitleButton2_->Draw();
+			pauseMenuBackGame_->Draw();
+			chooseTexture_->Draw();
+			break;
+		case 2:
+			pauseMenuRetryButton1_->Draw();
+			pauseMenuTitleButton1_->Draw();
+			pauseMenuBackGame2_->Draw();
+			chooseTexture_->Draw();
+			break;
+		}
+		
+	}
 
 	// スプライト描画後処理
 	Sprite::PostDraw();

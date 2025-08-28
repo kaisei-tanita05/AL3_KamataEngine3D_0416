@@ -1,9 +1,10 @@
-#include "GameScene.h"
-#include "Player.h"
-#include "KamataEngine.h"
-#include "TitleScene.h"
-#include "GameOver.h"
 #include "GameClear.h"
+#include "GameOver.h"
+#include "GameScene.h"
+#include "KamataEngine.h"
+#include "Player.h"
+#include "TitleScene.h"
+#include "operate.h"
 #include <Windows.h>
 
 using namespace KamataEngine;
@@ -12,11 +13,13 @@ TitleScene* titleScene = nullptr;
 GameScene* gameScene = nullptr;
 GameOver* gameOverScene = nullptr;
 GameClear* gameClearScene = nullptr;
+Operate* operateScene = nullptr;
 
 // 02_12 25枚目(Scene sceneまで)
 enum class Scene {
 	kUnknown = 0,
 	kTitle,
+	kOperate,
 	kGame,
 	kGameOver,
 	kGameClear,
@@ -32,9 +35,20 @@ void ChangeScene() {
 	case Scene::kTitle:
 		if (titleScene->IsFinished()) {
 			// シーン変更
-			scene = Scene::kGame;
+			scene = Scene::kOperate;
 			delete titleScene;
 			titleScene = nullptr;
+			operateScene = new Operate;
+			operateScene->Initialize();
+		}
+		break;
+
+	case Scene::kOperate:
+		if (operateScene->IsFinished()) {
+			// シーン変更
+			scene = Scene::kGame;
+			delete operateScene;
+			operateScene = nullptr;
 			gameScene = new GameScene;
 			gameScene->Initialize();
 		}
@@ -44,19 +58,38 @@ void ChangeScene() {
 		// 02_12 30枚目
 		if (gameScene->IsFinished()) {
 			Player* player_ = gameScene->GetPlayer();
-			// シーン変更
-			if (player_->IsDead()) {
-				scene = Scene::kGameOver;
-				delete gameScene;
-				gameScene = nullptr;
-				gameOverScene = new GameOver;
-				gameOverScene->Initialize();
-			}else if (player_->IsGoal()) {
-				scene = Scene::kGameClear;
-				delete gameScene;
-				gameScene = nullptr;
-				gameClearScene = new GameClear;
-				gameClearScene->Initialize();
+
+			// ポーズメニューからリトライ or タイトル選択
+			if (gameScene->IsPauseActive()) {
+				if (gameScene->GetPauseSelection() == 0) {
+					// リトライ
+					delete gameScene;
+					gameScene = new GameScene;
+					gameScene->Initialize();
+				} else if (gameScene->GetPauseSelection() == 1) {
+					// タイトル戻り
+					scene = Scene::kTitle;
+					delete gameScene;
+					gameScene = nullptr;
+					titleScene = new TitleScene;
+					titleScene->Initialize();
+				}
+			}
+			// 死亡 or ゴール時の遷移
+			else {
+				if (player_->IsDead()) {
+					scene = Scene::kGameOver;
+					delete gameScene;
+					gameScene = nullptr;
+					gameOverScene = new GameOver;
+					gameOverScene->Initialize();
+				} else if (player_->IsGoal()) {
+					scene = Scene::kGameClear;
+					delete gameScene;
+					gameScene = nullptr;
+					gameClearScene = new GameClear;
+					gameClearScene->Initialize();
+				}
 			}
 		}
 		break;
@@ -91,6 +124,9 @@ void UpDataScene() {
 	case Scene::kTitle:
 		titleScene->Update();
 		break;
+	case Scene::kOperate:
+		operateScene->Update();
+		break;
 	case Scene::kGame:
 		gameScene->Update();
 		break;
@@ -109,6 +145,9 @@ void DrawScene() {
 	case Scene::kTitle:
 		titleScene->Draw();
 		break;
+	case Scene::kOperate:
+		operateScene->Draw();
+		break;
 	case Scene::kGame:
 		gameScene->Draw();
 		break;
@@ -124,7 +163,6 @@ void DrawScene() {
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
-
 	KamataEngine::Initialize();
 
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
@@ -133,7 +171,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	titleScene = new TitleScene;
 	titleScene->Initialize();
 
-	//gameScene->Initialize();
+	// gameScene->Initialize();
 
 	// メインループ
 	while (true) {
@@ -165,6 +203,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	delete gameScene;
 	delete gameOverScene;
 	delete gameClearScene;
+	delete operateScene;
 
 	// nullptrの代入
 	gameScene = nullptr;
